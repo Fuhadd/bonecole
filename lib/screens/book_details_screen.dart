@@ -2,6 +2,7 @@ import 'package:bonecole/models/book_model.dart';
 import 'package:bonecole/utils/custom_colors.dart';
 import 'package:bonecole/utils/spacers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class BookDetailScreen extends StatelessWidget {
@@ -27,19 +28,30 @@ class BookDetailScreen extends StatelessWidget {
             Navigator.pop(context);
           },
         ),
-        title: SizedBox(
-            height: 60, child: Image.asset('assets/images/bonecole_logo.png')),
-        // actions: const [
-        //   Padding(
-        //     padding: EdgeInsets.only(right: 20.0),
-        //     child: Icon(
-        //       Icons.menu,
-        //       color: CustomColors.mainColor,
-        //       size: 35,
-        //     ),
-        //   )
+        title: SvgPicture.asset(
+          "assets/icons/bonecole_icon.svg",
+          height: 50,
+        ),
+        // actions: [
+        //   Builder(builder: (context) {
+        //     return GestureDetector(
+        //       onTap: () {
+        //         Scaffold.of(context).openEndDrawer();
+        //       },
+        //       child: Padding(
+        //         padding: const EdgeInsets.only(right: 20.0),
+        //         child: SvgPicture.asset(
+        //           "assets/icons/menu_icon.svg",
+        //           height: 14,
+        //         ),
+        //       ),
+        //     );
+        //   })
         // ],
       ),
+      // endDrawer: const Drawer(
+      //   child: EndDrawer(),
+      // ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(

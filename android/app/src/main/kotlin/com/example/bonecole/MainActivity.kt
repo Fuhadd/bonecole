@@ -1,4 +1,4 @@
-package com.example.bonecole
+package com.urbanhive.bonecole
 
 import io.flutter.embedding.android.FlutterActivity
 

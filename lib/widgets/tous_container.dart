@@ -50,7 +50,7 @@ class TousContainer extends StatelessWidget {
                 Text(
                   book.name,
                   style: const TextStyle(
-                      fontSize: 14,
+                      fontSize: 14.6,
                       fontWeight: FontWeight.w700,
                       color: CustomColors.mainColor),
                 ),
@@ -58,7 +58,7 @@ class TousContainer extends StatelessWidget {
                 Text(
                   book.author,
                   style: const TextStyle(
-                      fontSize: 13,
+                      fontSize: 13.6,
                       fontWeight: FontWeight.w500,
                       color: CustomColors.mainColor),
                 ),
@@ -94,7 +94,7 @@ class TousContainer extends StatelessWidget {
                     Text(
                       "${book.pages} lecons",
                       style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: CustomColors.mainColor),
                     ),
@@ -111,7 +111,7 @@ class TousContainer extends StatelessWidget {
                     Text(
                       "${book.timeInHours}H ${book.timeInMinutes} mins",
                       style: const TextStyle(
-                          fontSize: 12,
+                          fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: CustomColors.mainColor),
                     ),

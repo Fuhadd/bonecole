@@ -1,9 +1,17 @@
-import 'package:bonecole/screens/homescreen.dart';
+import 'package:bonecole/screens/auth/login_page.dart';
 import 'package:bonecole/utils/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'locator.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
+  await setupLocator();
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -25,9 +33,11 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
+        fontFamily: "Nunito",
         primarySwatch: Colors.blue,
       ),
-      home: const HomeScreen(),
+      home: const LoginPage(),
+      // home: const HomeScreen(),
       routes: appRoutes,
     );
   }

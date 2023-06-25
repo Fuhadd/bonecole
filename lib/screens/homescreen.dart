@@ -2,6 +2,7 @@ import 'package:bonecole/screens/tous_page.dart';
 import 'package:bonecole/utils/custom_colors.dart';
 import 'package:bonecole/utils/spacers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -29,35 +30,30 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         iconTheme: const IconThemeData(color: CustomColors.mainColor),
         centerTitle: false,
-        title: SizedBox(
-            height: 60, child: Image.asset('assets/images/bonecole_logo.png')),
+        title: SvgPicture.asset(
+          "assets/icons/bonecole_icon.svg",
+          height: 50,
+        ),
         // actions: [
-        //   GestureDetector(
-        //     onTap: _toggleDrawer,
-        //     child: Padding(
-        //       padding: const EdgeInsets.only(right: 20.0),
-        //       child: GestureDetector(
-        //         onTap: () {
-        //           if (!_isDrawerOpen) {
-        //             Scaffold.of(context).openEndDrawer();
-        //           } else {
-        //             Navigator.of(context).pop();
-        //           }
-        //           _toggleDrawer();
-        //         },
-        //         child: const Icon(
-        //           Icons.menu,
-        //           color: CustomColors.mainColor,
-        //           size: 35,
+        //   Builder(builder: (context) {
+        //     return GestureDetector(
+        //       onTap: () {
+        //         Scaffold.of(context).openEndDrawer();
+        //       },
+        //       child: Padding(
+        //         padding: const EdgeInsets.only(right: 20.0),
+        //         child: SvgPicture.asset(
+        //           "assets/icons/menu_icon.svg",
+        //           height: 14,
         //         ),
         //       ),
-        //     ),
-        //   )
+        //     );
+        //   })
         // ],
       ),
-      endDrawer: const Drawer(
-        child: EndDrawer(),
-      ),
+      // endDrawer: const Drawer(
+      //   child: EndDrawer(),
+      // ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -75,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 28,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w900,
                     color: CustomColors.mainColor),
               ),
               verticalSpacer(20),
@@ -83,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 "Convenablement avec les \nmeilleurs enseignants",
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 24,
+                    fontSize: 25,
                     fontWeight: FontWeight.w700,
                     color: CustomColors.mainColor),
               ),
@@ -99,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   child: const Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: 12.0, vertical: 10),
+                        EdgeInsets.symmetric(horizontal: 30.0, vertical: 16),
                     child: Text(
                       "S'inscrire maintenant",
                       textAlign: TextAlign.center,
@@ -124,7 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         color: CustomColors.mainColor,
                         image: DecorationImage(
                             image: AssetImage(
-                              'assets/images/boy_smiling_yellow.png',
+                              'assets/images/boy_yellow_bg.png',
                             ),
                             fit: BoxFit.cover),
                         borderRadius: BorderRadius.only(
@@ -143,7 +139,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: CustomColors.mainColor,
                             image: DecorationImage(
                                 image: AssetImage(
-                                  'assets/images/lady_smiling_orange.png',
+                                  'assets/images/girl_red_bg.png',
                                 ),
                                 fit: BoxFit.cover),
                             borderRadius: BorderRadius.only(
@@ -158,10 +154,10 @@ class _HomeScreenState extends State<HomeScreen> {
                           height: 120,
                           width: ((MediaQuery.of(context).size.width) - 50) / 2,
                           decoration: const BoxDecoration(
-                            color: CustomColors.mainColor,
+                            color: Colors.transparent,
                             image: DecorationImage(
                                 image: AssetImage(
-                                  'assets/images/boy_smiling_blue.png',
+                                  'assets/images/boy_blue_bg.png',
                                 ),
                                 fit: BoxFit.cover),
                             borderRadius: BorderRadius.only(
@@ -181,72 +177,91 @@ class _HomeScreenState extends State<HomeScreen> {
                 // height: 40,
                 color: CustomColors.lightMainColor,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0),
-                  child: Row(
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 15.0, horizontal: 10),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(
-                        FontAwesomeIcons.quoteLeft,
-                        color: CustomColors.lightOrange,
-                      ),
-                      const Expanded(
-                        child: SizedBox(
-                          child: Text(
-                            "Le monde dans lequel vinrent les fulures gentsations en différent de celui auquel nous sanimes habituer. Al est princialial que mercis prépazions nos enfants ainsi que nosis-mêmeo peurs ce monde.",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.normal,
-                                fontStyle: FontStyle.italic,
-                                color: CustomColors.whiteColor),
-                          ),
-                        ),
-                      ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            height: 40,
-                          ),
                           const Icon(
-                            FontAwesomeIcons.quoteRight,
+                            FontAwesomeIcons.quoteLeft,
                             color: CustomColors.lightOrange,
+                          ),
+                          Expanded(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: const [
+                                Expanded(
+                                  child: Text(
+                                    "Le monde dans lequel vinrent les fulures gentsations en différent de celui auquel nous sanimes habituer. Al est princialial que mercis prépazions nos enfants ainsi que nosis-mêmeo peurs ce monde.",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.normal,
+                                        fontStyle: FontStyle.italic,
+                                        color: CustomColors.whiteColor),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.only(right: 8.0),
+                                  child: Icon(
+                                    FontAwesomeIcons.quoteRight,
+                                    color: CustomColors.lightOrange,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ],
                       ),
-                      horizontalSpacer(10),
                       Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        // mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Container(
-                            height: 20,
+                            height: 15,
                           ),
-                          const Text(
-                            "Etudiez Sans limites!",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.normal,
-                                color: CustomColors.whiteColor),
-                          ),
-                          verticalSpacer(20),
                           Row(
-                            children: [
-                              const FaIcon(
-                                FontAwesomeIcons.squareFacebook,
-                                size: 20,
-                              ),
-                              horizontalSpacer(5),
-                              const FaIcon(
-                                FontAwesomeIcons.instagram,
-                                size: 20,
-                              ),
-                              horizontalSpacer(5),
-                              const Text(
-                                "/ @bonecole",
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: const [
+                              Text(
+                                "~ ",
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
-                                    fontSize: 12,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w400,
+                                    color: CustomColors.whiteColor),
+                              ),
+                              Text(
+                                "Fedenaze Steven",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: CustomColors.whiteColor),
+                              ),
+                            ],
+                          ),
+                          verticalSpacer(25),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SvgPicture.asset(
+                                "assets/icons/facebook_icon.svg",
+                                height: 30,
+                              ),
+                              horizontalSpacer(10),
+                              SvgPicture.asset(
+                                "assets/icons/instagram_icon.svg",
+                                height: 30,
+                              ),
+                              horizontalSpacer(10),
+                              const Text(
+                                "/ @Bonecole",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 18,
                                     fontWeight: FontWeight.normal,
                                     color: CustomColors.whiteColor),
                               ),
@@ -258,68 +273,107 @@ class _HomeScreenState extends State<HomeScreen> {
                     ],
                   ),
                 ),
-              )
+              ),
+              verticalSpacer(40),
+              const Text(
+                "Cours Populaires",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w900,
+                    color: CustomColors.mainColor),
+              ),
+              verticalSpacer(20),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const TousScreen(
+                                currentPage: 1,
+                              )));
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: CustomColors.mainColor),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Terminales",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: CustomColors.mainColor),
+                        ),
+                      ),
+                    ),
+                  ),
+                  horizontalSpacer(12),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const TousScreen(
+                                currentPage: 2,
+                              )));
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: CustomColors.mainColor),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "10e Année",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: CustomColors.mainColor),
+                        ),
+                      ),
+                    ),
+                  ),
+                  horizontalSpacer(12),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => const TousScreen(
+                                currentPage: 3,
+                              )));
+                    },
+                    child: Container(
+                      height: 40,
+                      width: 100,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: CustomColors.mainColor),
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "6e Année",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              color: CustomColors.mainColor),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              verticalSpacer(20 + (MediaQuery.of(context).padding.bottom))
             ],
           ),
         ),
       ),
-    );
-  }
-}
-
-class EndDrawer extends StatelessWidget {
-  const EndDrawer({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      children: <Widget>[
-        DrawerHeader(
-          // decoration: BoxDecoration(
-          //   color: Colors.blue,
-          // ),
-          child: SizedBox(
-              height: 60,
-              child: Image.asset('assets/images/bonecole_logo.png')),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(left: 10.0),
-          child: ListTile(
-            title: const Text(
-              'Home',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            onTap: () {
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const HomeScreen()));
-            },
-          ),
-        ),
-        verticalSpacer(20),
-        Padding(
-          padding: const EdgeInsets.only(left: 10.0),
-          child: ListTile(
-            title: const Text(
-              'Books',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-            onTap: () {
-              Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (context) => const TousScreen()));
-            },
-          ),
-        ),
-      ],
     );
   }
 }

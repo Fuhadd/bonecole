@@ -1,13 +1,16 @@
 import 'package:bonecole/utils/custom_colors.dart';
 import 'package:bonecole/utils/spacers.dart';
+import 'package:bonecole/widgets/10eme_gridview.dart';
+import 'package:bonecole/widgets/6eme_gridview.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../widgets/terminales_gridview.dart';
 import '../widgets/tous_gridview.dart';
-import 'homescreen.dart';
 
 class TousScreen extends StatefulWidget {
-  const TousScreen({super.key});
+  const TousScreen({super.key, this.currentPage = 0});
+  final int currentPage;
   static const routeName = '/tousScreen';
 
   @override
@@ -17,7 +20,13 @@ class TousScreen extends StatefulWidget {
 class _TousScreenState extends State<TousScreen>
     with SingleTickerProviderStateMixin {
   final PageController _pageController = PageController(initialPage: 0);
-  int _currentPage = 0;
+  late int _currentPage;
+
+  @override
+  void initState() {
+    _currentPage = widget.currentPage;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,33 +36,42 @@ class _TousScreenState extends State<TousScreen>
         iconTheme: const IconThemeData(color: CustomColors.mainColor),
         elevation: 0,
         centerTitle: false,
-        leading: Navigator.canPop(context)
-            ? IconButton(
-                icon: const Icon(
-                  Icons.arrow_back_ios_new,
-                  color: CustomColors.mainColor,
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              )
-            : const SizedBox.shrink(),
-        title: SizedBox(
-            height: 60, child: Image.asset('assets/images/bonecole_logo.png')),
-        // actions: const [
-        //   Padding(
-        //     padding: EdgeInsets.only(right: 20.0),
-        //     child: Icon(
-        //       Icons.menu,
-        //       color: CustomColors.mainColor,
-        //       size: 35,
-        //     ),
-        //   )
+        automaticallyImplyLeading: false,
+        // leading: Navigator.canPop(context)
+        //     ? IconButton(
+        //         icon: const Icon(
+        //           Icons.arrow_back_ios_new,
+        //           color: CustomColors.mainColor,
+        //         ),
+        //         onPressed: () {
+        //           Navigator.pop(context);
+        //         },
+        //       )
+        //     : const SizedBox.shrink(),
+        title: SvgPicture.asset(
+          "assets/icons/bonecole_icon.svg",
+          height: 50,
+        ),
+        // actions: [
+        //   Builder(builder: (context) {
+        //     return GestureDetector(
+        //       onTap: () {
+        //         Scaffold.of(context).openEndDrawer();
+        //       },
+        //       child: Padding(
+        //         padding: const EdgeInsets.only(right: 20.0),
+        //         child: SvgPicture.asset(
+        //           "assets/icons/menu_icon.svg",
+        //           height: 14,
+        //         ),
+        //       ),
+        //     );
+        //   })
         // ],
       ),
-      endDrawer: const Drawer(
-        child: EndDrawer(),
-      ),
+      // endDrawer: const Drawer(
+      //   child: EndDrawer(),
+      // ),
       body: SizedBox(
         height: MediaQuery.of(context).size.height,
         child: Center(
@@ -76,8 +94,9 @@ class _TousScreenState extends State<TousScreen>
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                            if (_currentPage > 0) {
-                              _pageController.previousPage(
+                            if (_currentPage != 0) {
+                              _pageController.animateToPage(
+                                0,
                                 duration: const Duration(milliseconds: 500),
                                 curve: Curves.easeInOut,
                               );
@@ -111,8 +130,9 @@ class _TousScreenState extends State<TousScreen>
                       Expanded(
                         child: GestureDetector(
                           onTap: () {
-                            if (_currentPage < 2 - 1) {
-                              _pageController.nextPage(
+                            if (_currentPage != 1) {
+                              _pageController.animateToPage(
+                                1,
                                 duration: const Duration(milliseconds: 500),
                                 curve: Curves.easeInOut,
                               );
@@ -151,40 +171,72 @@ class _TousScreenState extends State<TousScreen>
                   child: Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: CustomColors.mainColor),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "10ème Année",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: CustomColors.mainColor),
+                        child: GestureDetector(
+                          onTap: () {
+                            if (_currentPage != 2) {
+                              _pageController.animateToPage(
+                                2,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOut,
+                              );
+                            }
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: CustomColors.mainColor),
+                                borderRadius: BorderRadius.circular(8),
+                                color: _currentPage == 2
+                                    ? CustomColors.mainColor
+                                    : Colors.transparent),
+                            child: Center(
+                              child: Text(
+                                "10e Année",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: _currentPage == 2
+                                        ? CustomColors.whiteColor
+                                        : CustomColors.mainColor),
+                              ),
                             ),
                           ),
                         ),
                       ),
                       horizontalSpacer(25),
                       Expanded(
-                        child: Container(
-                          height: 50,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: CustomColors.mainColor),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              "6ème Année",
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: CustomColors.mainColor),
+                        child: GestureDetector(
+                          onTap: () {
+                            if (_currentPage != 3) {
+                              _pageController.animateToPage(
+                                3,
+                                duration: const Duration(milliseconds: 500),
+                                curve: Curves.easeInOut,
+                              );
+                            }
+                          },
+                          child: Container(
+                            height: 50,
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: CustomColors.mainColor),
+                                borderRadius: BorderRadius.circular(8),
+                                color: _currentPage == 3
+                                    ? CustomColors.mainColor
+                                    : Colors.transparent),
+                            child: Center(
+                              child: Text(
+                                "6ème Année",
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: _currentPage == 3
+                                        ? CustomColors.whiteColor
+                                        : CustomColors.mainColor),
+                              ),
                             ),
                           ),
                         ),
@@ -210,6 +262,8 @@ class _TousScreenState extends State<TousScreen>
                   children: const [
                     TousGridview(),
                     TerminalesGridview(),
+                    Emee10Gridview(),
+                    Emee6Gridview(),
                     // ThirdOnboardingPage(),
                   ],
                 )),
