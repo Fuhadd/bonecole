@@ -1,4 +1,5 @@
 import 'package:bonecole/models/book_model.dart';
+import 'package:bonecole/screens/video_screen.dart';
 import 'package:bonecole/utils/custom_colors.dart';
 import 'package:bonecole/utils/spacers.dart';
 import 'package:flutter/material.dart';
@@ -383,59 +384,80 @@ class CurriculumList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Container(
-                    height: 40,
-                    width: 40,
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle, color: CustomColors.orange),
-                    child: const Center(
-                      child: Icon(
-                        FontAwesomeIcons.play,
-                        color: CustomColors.whiteColor,
+    BookModel headerBook = BookModel(
+      name: "Pack 6eme Annee",
+      author: "Kabinet Keita",
+      newPrice: "30,000",
+      oldPrice: "50,000",
+      pages: 29,
+      timeInHours: 2,
+      timeInMinutes: 21,
+      imageUrl: 'assets/images/6eannee.png',
+    );
+    return GestureDetector(
+      onTap: () {
+        Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+                builder: (context) => VideoScreen(
+                      book: headerBook,
+                      // startAt: snapshot.data!.docs[index].get("duration"),
+                    )));
+      },
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      height: 40,
+                      width: 40,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: CustomColors.orange),
+                      child: const Center(
+                        child: Icon(
+                          FontAwesomeIcons.play,
+                          color: CustomColors.whiteColor,
+                        ),
                       ),
                     ),
-                  ),
-                  horizontalSpacer(10),
-                  Expanded(
-                    child: Text(
-                      title,
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: CustomColors.mainColor),
+                    horizontalSpacer(10),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: CustomColors.mainColor),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Text(
-                time,
-                style: const TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: CustomColors.mainColor),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
+                  time,
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: CustomColors.mainColor),
+                ),
               ),
-            ),
-          ],
-        ),
-        verticalSpacer(4),
-        const Divider(
-          thickness: 2,
-          indent: 20,
-          endIndent: 20,
-        ),
-        verticalSpacer(10),
-      ],
+            ],
+          ),
+          verticalSpacer(4),
+          const Divider(
+            thickness: 2,
+            indent: 20,
+            endIndent: 20,
+          ),
+          verticalSpacer(10),
+        ],
+      ),
     );
   }
 }
