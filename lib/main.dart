@@ -1,16 +1,20 @@
-import 'package:bonecole/screens/auth/login_page.dart';
+import 'package:bonecole/screens/homescreen.dart';
 import 'package:bonecole/utils/routes.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+import 'firebase_options.dart';
 import 'locator.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
+
   await setupLocator();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -36,8 +40,8 @@ class MyApp extends StatelessWidget {
         fontFamily: "Nunito",
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage(),
-      // home: const HomeScreen(),
+      // home: const LoginPage(),
+      home: const HomeScreen(),
       routes: appRoutes,
     );
   }
