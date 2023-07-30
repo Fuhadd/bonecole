@@ -1,10 +1,16 @@
+import 'dart:io';
+
 import 'package:bonecole/models/book_model.dart';
+import 'package:bonecole/screens/pdf_viewer_page.dart';
 import 'package:bonecole/screens/video_screen.dart';
 import 'package:bonecole/utils/custom_colors.dart';
+import 'package:bonecole/utils/pdf_api.dart';
 import 'package:bonecole/utils/spacers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import 'audio_player_screen.dart';
 
 class BookDetailScreen extends StatelessWidget {
   final BookModel book;
@@ -241,15 +247,22 @@ class BookDetailScreen extends StatelessWidget {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
+                        children: [
+                          const Text(
                             "Chapitre 1: Acide et base en solution aqueuse",
                             style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: CustomColors.mainColor),
                           ),
-                          Icon(FontAwesomeIcons.fileCode)
+                          GestureDetector(
+                              onTap: () async {
+                                const url =
+                                    "https://www.ariostea-high-tech.com/doc/cataloghi_catalogues/balance-665.pdf";
+                                final file = await PDFApi.loadNetwork(url);
+                                openPDF(context, file);
+                              },
+                              child: const Icon(FontAwesomeIcons.fileCode))
                         ],
                       ),
                       verticalSpacer(3),
@@ -266,11 +279,11 @@ class BookDetailScreen extends StatelessWidget {
                         title: "1. Dissociation et produit ionique",
                         time: "08:00",
                       ),
-                      const CurriculumList(
+                      const CurriculumListPDF(
                         title: "2. Dissociation et produit ionique (suite)",
                         time: "07:52",
                       ),
-                      const CurriculumList(
+                      const CurriculumListAudio(
                         title: "3. Les acides forts et les bases fortes",
                         time: "08:22",
                       ),
@@ -371,6 +384,10 @@ class BookDetailScreen extends StatelessWidget {
       ),
     );
   }
+
+  void openPDF(BuildContext context, File file) => Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => PDFViewerPage(file: file)),
+      );
 }
 
 class CurriculumList extends StatelessWidget {
@@ -420,6 +437,204 @@ class CurriculumList extends StatelessWidget {
                       child: const Center(
                         child: Icon(
                           FontAwesomeIcons.play,
+                          color: CustomColors.whiteColor,
+                        ),
+                      ),
+                    ),
+                    horizontalSpacer(10),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: CustomColors.mainColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
+                  time,
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: CustomColors.mainColor),
+                ),
+              ),
+            ],
+          ),
+          verticalSpacer(4),
+          const Divider(
+            thickness: 2,
+            indent: 20,
+            endIndent: 20,
+          ),
+          verticalSpacer(10),
+        ],
+      ),
+    );
+  }
+}
+
+class CurriculumListPDF extends StatefulWidget {
+  const CurriculumListPDF({
+    super.key,
+    required this.title,
+    required this.time,
+  });
+  final String title;
+  final String time;
+
+  @override
+  State<CurriculumListPDF> createState() => _CurriculumListPDFState();
+}
+
+class _CurriculumListPDFState extends State<CurriculumListPDF> {
+  bool isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    BookModel headerBook = BookModel(
+      name: "Pack 6eme Annee",
+      author: "Kabinet Keita",
+      newPrice: "30,000",
+      oldPrice: "50,000",
+      pages: 29,
+      timeInHours: 2,
+      timeInMinutes: 21,
+      imageUrl: 'assets/images/6eannee.png',
+    );
+    return GestureDetector(
+      onTap: () async {
+        setState(() {
+          isLoading = true;
+        });
+        const url =
+            "https://www.ariostea-high-tech.com/doc/cataloghi_catalogues/balance-665.pdf";
+        final file = await PDFApi.loadNetwork(url);
+        openPDF(context, file);
+        setState(() {
+          isLoading = false;
+        });
+      },
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      height: 40,
+                      width: 40,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: CustomColors.orange),
+                      child: Center(
+                        child: isLoading
+                            ? const Padding(
+                                padding: EdgeInsets.all(10.0),
+                                child: CircularProgressIndicator(
+                                  color: CustomColors.whiteColor,
+                                ),
+                              )
+                            : const Icon(
+                                FontAwesomeIcons.filePdf,
+                                color: CustomColors.whiteColor,
+                              ),
+                      ),
+                    ),
+                    horizontalSpacer(10),
+                    Expanded(
+                      child: Text(
+                        widget.title,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: CustomColors.mainColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text(
+                  widget.time,
+                  style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: CustomColors.mainColor),
+                ),
+              ),
+            ],
+          ),
+          verticalSpacer(4),
+          const Divider(
+            thickness: 2,
+            indent: 20,
+            endIndent: 20,
+          ),
+          verticalSpacer(10),
+        ],
+      ),
+    );
+  }
+
+  void openPDF(BuildContext context, File file) => Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => PDFViewerPage(file: file)),
+      );
+}
+
+class CurriculumListAudio extends StatelessWidget {
+  const CurriculumListAudio({
+    super.key,
+    required this.title,
+    required this.time,
+  });
+  final String title;
+  final String time;
+
+  @override
+  Widget build(BuildContext context) {
+    BookModel headerBook = BookModel(
+      name: "Pack 6eme Annee",
+      author: "Kabinet Keita",
+      newPrice: "30,000",
+      oldPrice: "50,000",
+      pages: 29,
+      timeInHours: 2,
+      timeInMinutes: 21,
+      imageUrl: 'assets/images/6eannee.png',
+    );
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => const AudioPlayerScreen(
+                    // book: headerBook,
+                    // startAt: snapshot.data!.docs[index].get("duration"),
+                    )));
+      },
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      height: 40,
+                      width: 40,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: CustomColors.orange),
+                      child: const Center(
+                        child: Icon(
+                          FontAwesomeIcons.music,
                           color: CustomColors.whiteColor,
                         ),
                       ),

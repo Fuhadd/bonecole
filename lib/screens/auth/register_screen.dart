@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -32,11 +33,11 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height -
-                (MediaQuery.of(context).padding.top +
-                    MediaQuery.of(context).padding.bottom),
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height -
+              (MediaQuery.of(context).padding.top +
+                  MediaQuery.of(context).padding.bottom),
+          child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Column(
@@ -48,13 +49,17 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const SizedBox(height: 50),
-
-                        // logo
-                        const Icon(
-                          Icons.lock,
-                          size: 50,
-                          color: CustomColors.mainColor,
+                        SvgPicture.asset(
+                          "assets/icons/book_read.svg",
+                          height: 100,
+                          // width: double.infinity,
                         ),
+                        // logo
+                        // const Icon(
+                        //   Icons.lock,
+                        //   size: 50,
+                        //   color: CustomColors.mainColor,
+                        // ),
 
                         const SizedBox(height: 30),
                         Padding(
@@ -137,10 +142,10 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         ),
 
                         const SizedBox(height: 10),
-                        customTextField(
-                          "companyId",
-                          hintText: 'Company Id - Optional',
-                        ),
+                        // customTextField(
+                        //   "companyId",
+                        //   hintText: 'Company Id - Optional',
+                        // ),
 
                         const SizedBox(height: 10),
                         customTextField(
@@ -188,14 +193,14 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                             bool? validate = _formKey.currentState?.validate();
                             print(validate);
                             if (validate == true) {
-                              String? companyId = _formKey
-                                  .currentState?.fields['companyId']?.value
-                                  .toString()
-                                  .trim();
+                              // String? companyId = _formKey
+                              //     .currentState?.fields['companyId']?.value
+                              //     .toString()
+                              //     .trim();
 
-                              if (companyId!.isEmpty || companyId == "null") {
-                                companyId = "0";
-                              }
+                              // if (companyId!.isEmpty || companyId == "null") {
+                              //   companyId = "0";
+                              // }
                               _formKey.currentState?.save();
 
                               var email = _formKey
@@ -210,7 +215,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                                   .currentState?.fields['lastName']?.value
                                   .toString()
                                   .trim();
-                              var companyid = int.parse(companyId);
+                              // var companyid = int.parse(companyId);
 
                               var password = _formKey
                                   .currentState?.fields['password']?.value;

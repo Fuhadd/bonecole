@@ -74,7 +74,7 @@ class AuthViewModel extends BaseChangeNotifier {
         }
 
         isLoading = false;
-        Navigator.of(context!).pushNamed(
+        Navigator.of(context!).pushReplacementNamed(
           HomeScreen.routeName,
         );
 
@@ -128,7 +128,7 @@ class AuthViewModel extends BaseChangeNotifier {
         // navigationHandler.pushNamed(
         //   ProfileScreen.routeName,
         // );
-        Navigator.of(context!).pushNamed(
+        Navigator.of(context!).pushReplacementNamed(
           HomeScreen.routeName,
         );
       } else {

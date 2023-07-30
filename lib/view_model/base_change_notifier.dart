@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../locator.dart';
 import '../repositories/user_repo.dart';
 import '../utils/app_logger.dart';
+import '../utils/navigator_handler.dart';
 import 'local_cache/local_cache.dart';
 
 class BaseChangeNotifier extends ChangeNotifier {
@@ -27,5 +28,3 @@ class BaseChangeNotifier extends ChangeNotifier {
     AppLogger.log("$e");
   }
 }
-
-class NavigationHandler {}

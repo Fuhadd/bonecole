@@ -1,4 +1,4 @@
-import 'package:bonecole/screens/homescreen.dart';
+import 'package:bonecole/screens/auth/login_page.dart';
 import 'package:bonecole/utils/routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -10,10 +10,11 @@ import 'locator.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await setupLocator();
+  // await setupLocator();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await setupLocator();
 
   runApp(const ProviderScope(child: MyApp()));
 }
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
+      // routes: appRoutes,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         // This is the theme of your application.
@@ -40,8 +42,8 @@ class MyApp extends StatelessWidget {
         fontFamily: "Nunito",
         primarySwatch: Colors.blue,
       ),
-      // home: const LoginPage(),
-      home: const HomeScreen(),
+      home: const LoginPage(),
+      // home: const HomeScreen(),
       routes: appRoutes,
     );
   }

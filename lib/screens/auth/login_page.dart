@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -48,13 +49,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         const SizedBox(height: 50),
+                        SvgPicture.asset(
+                          "assets/icons/book_read.svg",
+                          height: 150,
+                          // width: double.infinity,
+                        ),
 
                         // logo
-                        const Icon(
-                          Icons.lock,
-                          size: 100,
-                          color: CustomColors.mainColor,
-                        ),
+                        // const Icon(
+                        //   Icons.lock,
+                        //   size: 100,
+                        //   color: CustomColors.mainColor,
+                        // ),
 
                         const SizedBox(height: 30),
 
