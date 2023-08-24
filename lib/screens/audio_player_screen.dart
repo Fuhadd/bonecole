@@ -1,13 +1,18 @@
+import 'dart:io';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bonecole/utils/custom_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class AudioPlayerScreen extends StatefulWidget {
-  const AudioPlayerScreen({super.key});
+  const AudioPlayerScreen(
+      {super.key, required this.audioUrl, required this.isDownloaded});
 
   @override
   State<AudioPlayerScreen> createState() => _AudioPlayerScreenState();
+  final String audioUrl;
+  final bool isDownloaded;
 }
 
 class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
@@ -26,11 +31,27 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
       });
       String url =
           "https://firebasestorage.googleapis.com/v0/b/bonecole-2f0f4.appspot.com/o/4-things-i-wish-i-knew-in-my-20s-128-ytshorts.savetube.me.mp3?alt=media&token=a592f319-9ae1-441b-9979-a6bad33812ff";
-      audioPlayer.play(UrlSource(url)).then((value) {
-        setState(() {
-          isLoading = false;
+
+      //       if (widget.isDownloaded) {
+      //   final videoFile = File(widget.videpPath);
+      //   _videoPlayerController = VideoPlayerController.file(videoFile);
+      // } else {
+      //   _videoPlayerController = VideoPlayerController.network(widget.videpPath);
+      // }
+      if (widget.isDownloaded) {
+        final videoFile = File(widget.audioUrl);
+        audioPlayer.play(DeviceFileSource(widget.audioUrl)).then((value) {
+          setState(() {
+            isLoading = false;
+          });
         });
-      });
+      } else {
+        audioPlayer.play(UrlSource(widget.audioUrl)).then((value) {
+          setState(() {
+            isLoading = false;
+          });
+        });
+      }
     }
 
     // Listen to states: playing, paused, stopped

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:bonecole/screens/book_details_screen.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
@@ -42,9 +44,16 @@ String getMovieName(MovieName type) {
 
 class VideoScreen extends StatefulWidget {
   final BookModel book;
+  final String videoUrl;
   final int startAt;
+  final bool isDownloaded;
   static const routeName = '/entry_screen';
-  const VideoScreen({super.key, required this.book, this.startAt = 0});
+  const VideoScreen(
+      {super.key,
+      required this.videoUrl,
+      required this.book,
+      required this.isDownloaded,
+      this.startAt = 0});
 
   @override
   _VideoScreenState createState() => _VideoScreenState();
@@ -103,12 +112,13 @@ class _VideoScreenState extends State<VideoScreen> {
           child: Stack(
             children: [
               VideoPlayerWidget(
-                videpPath:
-                    "https://neallusmawubucket001.s3.us-east-2.amazonaws.com/Mawu+Files/Videos/Shadow.mp4",
+                videpPath: widget.videoUrl,
+                // "https://neallusmawubucket001.s3.us-east-2.amazonaws.com/Mawu+Files/Videos/Shadow.mp4",
                 onUpdateDuration: updateCurrentDuration,
                 startAt: Duration(milliseconds: duration),
                 book: widget.book,
                 duration: duration,
+                isDownloaded: widget.isDownloaded,
               ),
               // Row(
               //   children: [
@@ -154,12 +164,14 @@ class VideoPlayerWidget extends StatefulWidget {
     required this.startAt,
     required this.book,
     required this.duration,
+    required this.isDownloaded,
   });
   final String videpPath;
   final Function(Duration) onUpdateDuration;
   final Duration startAt;
   final BookModel book;
   final int duration;
+  final bool isDownloaded;
 
   @override
   State<VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
@@ -178,7 +190,15 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
-    _videoPlayerController = VideoPlayerController.network(widget.videpPath);
+    // _videoPlayerController = VideoPlayerController.network(widget.videpPath);
+    // _videoPlayerController = VideoPlayerController.network(widget.videpPath);
+    if (widget.isDownloaded) {
+      final videoFile = File(widget.videpPath);
+      _videoPlayerController = VideoPlayerController.file(videoFile);
+    } else {
+      _videoPlayerController = VideoPlayerController.network(widget.videpPath);
+    }
+
     // _chewieController = ChewieController(
     //   videoPlayerController: _videoPlayerController,
     //   aspectRatio: 16 / 9,

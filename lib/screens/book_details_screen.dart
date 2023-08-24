@@ -6,18 +6,28 @@ import 'package:bonecole/screens/video_screen.dart';
 import 'package:bonecole/utils/custom_colors.dart';
 import 'package:bonecole/utils/pdf_api.dart';
 import 'package:bonecole/utils/spacers.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path/path.dart' as Path;
 
+import '../utils/directory_path.dart';
 import 'audio_player_screen.dart';
 
-class BookDetailScreen extends StatelessWidget {
+class BookDetailScreen extends StatefulWidget {
   final BookModel book;
 
   const BookDetailScreen({super.key, required this.book});
   static const routeName = '/bookdetails';
 
+  @override
+  State<BookDetailScreen> createState() => _BookDetailScreenState();
+}
+
+class _BookDetailScreenState extends State<BookDetailScreen> {
+  bool isPdfLoading = false;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -72,7 +82,7 @@ class BookDetailScreen extends StatelessWidget {
                       color: CustomColors.blackColor,
                       borderRadius: BorderRadius.circular(10),
                       image: DecorationImage(
-                          image: AssetImage(book.imageUrl),
+                          image: AssetImage(widget.book.imageUrl),
                           fit: BoxFit.cover,
                           opacity: 0.3)),
                   child: Padding(
@@ -82,7 +92,7 @@ class BookDetailScreen extends StatelessWidget {
                         children: [
                           verticalSpacer(20),
                           Text(
-                            book.name,
+                            widget.book.name,
                             style: const TextStyle(
                                 fontSize: 25,
                                 fontWeight: FontWeight.w700,
@@ -121,7 +131,7 @@ class BookDetailScreen extends StatelessWidget {
                                 decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     image: DecorationImage(
-                                      image: AssetImage(book.imageUrl),
+                                      image: AssetImage(widget.book.imageUrl),
                                       fit: BoxFit.cover,
                                     )),
                               ),
@@ -130,7 +140,7 @@ class BookDetailScreen extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    book.author,
+                                    widget.book.author,
                                     style: const TextStyle(
                                         fontSize: 15,
                                         fontWeight: FontWeight.w500,
@@ -170,7 +180,7 @@ class BookDetailScreen extends StatelessWidget {
                           Row(
                             children: [
                               Text(
-                                "${book.newPrice} GNF",
+                                "${widget.book.newPrice} GNF",
                                 style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
@@ -178,7 +188,7 @@ class BookDetailScreen extends StatelessWidget {
                               ),
                               horizontalSpacer(10),
                               Text(
-                                "${book.oldPrice} GNF",
+                                "${widget.book.oldPrice} GNF",
                                 style: const TextStyle(
                                     fontSize: 18,
                                     decoration: TextDecoration.lineThrough,
@@ -257,12 +267,29 @@ class BookDetailScreen extends StatelessWidget {
                           ),
                           GestureDetector(
                               onTap: () async {
+                                setState(() {
+                                  isPdfLoading = true;
+                                });
                                 const url =
                                     "https://www.ariostea-high-tech.com/doc/cataloghi_catalogues/balance-665.pdf";
                                 final file = await PDFApi.loadNetwork(url);
+                                setState(() {
+                                  isPdfLoading = false;
+                                });
                                 openPDF(context, file);
                               },
-                              child: const Icon(FontAwesomeIcons.fileCode))
+                              child: isPdfLoading
+                                  ? const Padding(
+                                      padding: EdgeInsets.all(10.0),
+                                      child: SizedBox(
+                                        height: 15,
+                                        width: 15,
+                                        child: CircularProgressIndicator(
+                                          color: CustomColors.blackColor,
+                                        ),
+                                      ),
+                                    )
+                                  : const Icon(FontAwesomeIcons.fileCode))
                         ],
                       ),
                       verticalSpacer(3),
@@ -275,56 +302,95 @@ class BookDetailScreen extends StatelessWidget {
                         ),
                       ),
                       verticalSpacer(20),
+                      // Expanded(
+                      //   child: ListView.builder(
+                      //     itemCount: curriculumList.length,
+                      //     itemBuilder: (context, index) {
+                      //       final curriculum = curriculumList[index];
+                      //       final title = curriculum.title;
+                      //       final time = curriculum.time;
+                      //       final fileUrl = curriculum.fileUrl;
+
+                      //       if (curriculum.type == CurriculumType.audio) {
+                      //         return CurriculumListAudio(
+                      //           title: title,
+                      //           time: time,
+                      //           fileUrl: fileUrl,
+                      //         );
+                      //       } else {
+                      //         return CurriculumList(
+                      //           title: title,
+                      //           time: time,
+                      //           fileUrl: fileUrl,
+                      //         );
+                      //       }
+                      //     },
+                      //   ),
+                      // )
+
                       const CurriculumList(
-                        title: "1. Dissociation et produit ionique",
-                        time: "08:00",
-                      ),
-                      const CurriculumListPDF(
-                        title: "2. Dissociation et produit ionique (suite)",
-                        time: "07:52",
-                      ),
+                          title: "1. Dissociation et produit ionique",
+                          time: "08:00",
+                          fileUrl:
+                              "https://download.samplelib.com/mp4/sample-30s.mp4"),
+                      const CurriculumList(
+                          title: "4. Acide faible et base faible",
+                          time: "09:22",
+                          fileUrl:
+                              "https://download.samplelib.com/mp4/sample-20s.mp4"),
+
                       const CurriculumListAudio(
                         title: "3. Les acides forts et les bases fortes",
                         time: "08:22",
+                        fileUrl:
+                            "https://firebasestorage.googleapis.com/v0/b/bonecole-2f0f4.appspot.com/o/4-things-i-wish-i-knew-in-my-20s-128-ytshorts.savetube.me.mp3?alt=media&token=a592f319-9ae1-441b-9979-a6bad33812ff",
+                      ),
+
+                      const CurriculumList(
+                          title: "5. Bases et classification",
+                          time: "10:51",
+                          fileUrl:
+                              "https://download.samplelib.com/mp4/sample-15s.mp4"),
+                      const CurriculumList(
+                          title:
+                              "6. Réaction entre un acide fort et une base forte",
+                          time: "09:53",
+                          fileUrl:
+                              "https://download.samplelib.com/mp4/sample-10s.mp4"),
+                      const CurriculumListAudio(
+                        title: "3. Les acides forts et les bases fortes",
+                        time: "08:22",
+                        fileUrl:
+                            "https://samplelib.com/lib/preview/mp3/sample-9s.mp3",
                       ),
                       const CurriculumList(
-                        title: "4. Acide faible et base faible",
-                        time: "09:22",
-                      ),
+                          title:
+                              "7. Réaction entre un acide faible et une base forte",
+                          time: "09:31",
+                          fileUrl:
+                              "https://download.samplelib.com/mp4/sample-30s.mp4"),
                       const CurriculumList(
-                        title: "5. Bases et classification",
-                        time: "10:51",
-                      ),
+                          title:
+                              "8. Réaction entre un acide fort et une base faible",
+                          time: "09:57",
+                          fileUrl:
+                              "https://download.samplelib.com/mp4/sample-30s.mp4"),
+
                       const CurriculumList(
-                        title:
-                            "6. Réaction entre un acide fort et une base forte",
-                        time: "09:53",
-                      ),
+                          title: "10. Solution tampon lère partie",
+                          time: "07:50",
+                          fileUrl:
+                              "https://download.samplelib.com/mp4/sample-30s.mp4"),
                       const CurriculumList(
-                        title:
-                            "7. Réaction entre un acide faible et une base forte",
-                        time: "09:31",
-                      ),
-                      const CurriculumList(
-                        title:
-                            "8. Réaction entre un acide fort et une base faible",
-                        time: "09:57",
-                      ),
-                      const CurriculumList(
-                        title: "9. Dosage acido-basique",
-                        time: "07:34",
-                      ),
-                      const CurriculumList(
-                        title: "10. Solution tampon lère partie",
-                        time: "07:50",
-                      ),
-                      const CurriculumList(
-                        title: "11. Solution tampon 2ème partie",
-                        time: "08:02",
-                      ),
-                      const CurriculumList(
-                        title: "11. Solution tampon 2ème partie",
-                        time: "",
+                          title: "11. Solution tampon 2ème partie",
+                          time: "08:02",
+                          fileUrl:
+                              "https://samplelib.com/lib/preview/mp4/sample-5s.mp4"),
+                      const CurriculumListAudio(
+                        title: "3. Les acides forts et les bases fortes",
+                        time: "08:22",
+                        fileUrl:
+                            "https://samplelib.com/lib/preview/mp3/sample-3s.mp3",
                       ),
                     ],
                   ),
@@ -341,15 +407,39 @@ class BookDetailScreen extends StatelessWidget {
                     children: [
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
-                          Text(
+                        children: [
+                          const Text(
                             "Chapitre 2: Cinétique chimique",
                             style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
                                 color: CustomColors.mainColor),
                           ),
-                          Icon(FontAwesomeIcons.fileCode)
+                          GestureDetector(
+                              onTap: () async {
+                                setState(() {
+                                  isPdfLoading = true;
+                                });
+                                const url =
+                                    "https://www.antennahouse.com/hubfs/xsl-fo-sample/pdf/basic-link-1.pdf";
+                                final file = await PDFApi.loadNetwork(url);
+                                setState(() {
+                                  isPdfLoading = false;
+                                });
+                                openPDF(context, file);
+                              },
+                              child: isPdfLoading
+                                  ? const Padding(
+                                      padding: EdgeInsets.all(10.0),
+                                      child: SizedBox(
+                                        height: 15,
+                                        width: 15,
+                                        child: CircularProgressIndicator(
+                                          color: CustomColors.blackColor,
+                                        ),
+                                      ),
+                                    )
+                                  : const Icon(FontAwesomeIcons.fileCode))
                         ],
                       ),
                       verticalSpacer(3),
@@ -363,16 +453,20 @@ class BookDetailScreen extends StatelessWidget {
                       ),
                       verticalSpacer(20),
                       const CurriculumList(
-                        title: "1. Définition et évolution des systèmes",
-                        time: "08:44",
-                      ),
+                          title: "1. Dissociation et produit ionique",
+                          time: "08:00",
+                          fileUrl:
+                              "https://download.samplelib.com/mp4/sample-30s.mp4"),
                       const CurriculumList(
-                        title: "2. Vitesse des réactions",
-                        time: "09:44",
-                      ),
-                      const CurriculumList(
-                        title: "3. Les facteurs cinétiques",
-                        time: "02:17",
+                          title: "4. Acide faible et base faible",
+                          time: "09:22",
+                          fileUrl:
+                              "https://download.samplelib.com/mp4/sample-20s.mp4"),
+                      const CurriculumListAudio(
+                        title: "3. Les acides forts et les bases fortes",
+                        time: "08:22",
+                        fileUrl:
+                            "https://firebasestorage.googleapis.com/v0/b/bonecole-2f0f4.appspot.com/o/4-things-i-wish-i-knew-in-my-20s-128-ytshorts.savetube.me.mp3?alt=media&token=a592f319-9ae1-441b-9979-a6bad33812ff",
                       ),
                     ],
                   ),
@@ -390,14 +484,86 @@ class BookDetailScreen extends StatelessWidget {
       );
 }
 
-class CurriculumList extends StatelessWidget {
-  const CurriculumList({
-    super.key,
-    required this.title,
-    required this.time,
-  });
+class CurriculumList extends StatefulWidget {
+  const CurriculumList(
+      {super.key,
+      required this.title,
+      required this.time,
+      required this.fileUrl});
   final String title;
   final String time;
+  final String fileUrl;
+
+  @override
+  State<CurriculumList> createState() => _CurriculumListState();
+}
+
+class _CurriculumListState extends State<CurriculumList> {
+  bool dowloading = false;
+  bool fileExists = false;
+  double progress = 0;
+  String fileName = "";
+  late String filePath;
+  late CancelToken cancelToken;
+  var getPathFile = DirectoryPath();
+
+  startDownload() async {
+    cancelToken = CancelToken();
+    var storePath = await getPathFile.getPath();
+    filePath = '$storePath/$fileName';
+    setState(() {
+      dowloading = true;
+      progress = 0;
+    });
+
+    try {
+      await Dio().download(widget.fileUrl, filePath,
+          onReceiveProgress: (count, total) {
+        setState(() {
+          progress = (count / total);
+        });
+      }, cancelToken: cancelToken);
+      setState(() {
+        dowloading = false;
+        fileExists = true;
+      });
+    } catch (e) {
+      print(e);
+      setState(() {
+        dowloading = false;
+      });
+    }
+  }
+
+  cancelDownload() {
+    cancelToken.cancel();
+    setState(() {
+      dowloading = false;
+    });
+  }
+
+  checkFileExit() async {
+    var storePath = await getPathFile.getPath();
+    filePath = '$storePath/$fileName';
+    bool fileExistCheck = await File(filePath).exists();
+    setState(() {
+      fileExists = fileExistCheck;
+    });
+  }
+
+  openfile() {
+    OpenFile.open(filePath);
+    print("fff $filePath");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      fileName = Path.basename(widget.fileUrl);
+    });
+    checkFileExit();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -417,7 +583,9 @@ class CurriculumList extends StatelessWidget {
             context,
             MaterialPageRoute(
                 builder: (context) => VideoScreen(
+                      isDownloaded: fileExists,
                       book: headerBook,
+                      videoUrl: fileExists ? filePath : widget.fileUrl,
                       // startAt: snapshot.data!.docs[index].get("duration"),
                     )));
       },
@@ -444,7 +612,7 @@ class CurriculumList extends StatelessWidget {
                     horizontalSpacer(10),
                     Expanded(
                       child: Text(
-                        title,
+                        widget.title,
                         style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -455,15 +623,46 @@ class CurriculumList extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  time,
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: CustomColors.mainColor),
-                ),
-              ),
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: IconButton(
+                      onPressed: () {
+                        fileExists && dowloading == false
+                            // ? openfile()
+                            ? null
+                            : startDownload();
+                      },
+                      icon: fileExists
+                          ? const Icon(
+                              Icons.save,
+                              color: Colors.green,
+                            )
+                          : dowloading
+                              ? Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    CircularProgressIndicator(
+                                      value: progress,
+                                      strokeWidth: 3,
+                                      backgroundColor: Colors.grey,
+                                      valueColor:
+                                          const AlwaysStoppedAnimation<Color>(
+                                              Colors.blue),
+                                    ),
+                                    Text(
+                                      "${(progress * 100).toInt()} %",
+                                      style: const TextStyle(fontSize: 12),
+                                    )
+                                  ],
+                                )
+                              : const Icon(Icons.download))
+                  //  Text(
+                  //   widget.time,
+                  //   style: const TextStyle(
+                  //       fontSize: 14,
+                  //       fontWeight: FontWeight.w500,
+                  //       color: CustomColors.mainColor),
+                  // ),
+                  ),
             ],
           ),
           verticalSpacer(4),
@@ -588,14 +787,87 @@ class _CurriculumListPDFState extends State<CurriculumListPDF> {
       );
 }
 
-class CurriculumListAudio extends StatelessWidget {
+class CurriculumListAudio extends StatefulWidget {
   const CurriculumListAudio({
     super.key,
     required this.title,
     required this.time,
+    required this.fileUrl,
   });
   final String title;
   final String time;
+  final String fileUrl;
+
+  @override
+  State<CurriculumListAudio> createState() => _CurriculumListAudioState();
+}
+
+class _CurriculumListAudioState extends State<CurriculumListAudio> {
+  bool dowloading = false;
+  bool fileExists = false;
+  double progress = 0;
+  String fileName = "";
+  late String filePath;
+  late CancelToken cancelToken;
+  var getPathFile = DirectoryPath();
+
+  startDownload() async {
+    cancelToken = CancelToken();
+    var storePath = await getPathFile.getPath();
+    filePath = '$storePath/$fileName';
+    setState(() {
+      dowloading = true;
+      progress = 0;
+    });
+
+    try {
+      await Dio().download(widget.fileUrl, filePath,
+          onReceiveProgress: (count, total) {
+        setState(() {
+          progress = (count / total);
+        });
+      }, cancelToken: cancelToken);
+      setState(() {
+        dowloading = false;
+        fileExists = true;
+      });
+    } catch (e) {
+      print(e);
+      setState(() {
+        dowloading = false;
+      });
+    }
+  }
+
+  cancelDownload() {
+    cancelToken.cancel();
+    setState(() {
+      dowloading = false;
+    });
+  }
+
+  checkFileExit() async {
+    var storePath = await getPathFile.getPath();
+    filePath = '$storePath/$fileName';
+    bool fileExistCheck = await File(filePath).exists();
+    setState(() {
+      fileExists = fileExistCheck;
+    });
+  }
+
+  openfile() {
+    OpenFile.open(filePath);
+    print("fff $filePath");
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      fileName = Path.basename(widget.fileUrl);
+    });
+    checkFileExit();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -614,9 +886,12 @@ class CurriculumListAudio extends StatelessWidget {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const AudioPlayerScreen(
-                    // book: headerBook,
-                    // startAt: snapshot.data!.docs[index].get("duration"),
+                builder: (context) => AudioPlayerScreen(
+                      isDownloaded: fileExists,
+                      // book: headerBook,
+                      audioUrl: fileExists ? filePath : widget.fileUrl,
+                      // book: headerBook,
+                      // startAt: snapshot.data!.docs[index].get("duration"),
                     )));
       },
       child: Column(
@@ -642,7 +917,7 @@ class CurriculumListAudio extends StatelessWidget {
                     horizontalSpacer(10),
                     Expanded(
                       child: Text(
-                        title,
+                        widget.title,
                         style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
@@ -653,15 +928,47 @@ class CurriculumListAudio extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: Text(
-                  time,
-                  style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: CustomColors.mainColor),
-                ),
-              ),
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: IconButton(
+                      onPressed: () {
+                        fileExists && dowloading == false
+                            // ? openfile()
+                            ? null
+                            : startDownload();
+                      },
+                      icon: fileExists
+                          ? const Icon(
+                              Icons.save,
+                              color: Colors.green,
+                            )
+                          : dowloading
+                              ? Stack(
+                                  alignment: Alignment.center,
+                                  children: [
+                                    CircularProgressIndicator(
+                                      value: progress,
+                                      strokeWidth: 3,
+                                      backgroundColor: Colors.grey,
+                                      valueColor:
+                                          const AlwaysStoppedAnimation<Color>(
+                                              Colors.blue),
+                                    ),
+                                    Text(
+                                      "${(progress * 100).toInt()} %",
+                                      style: const TextStyle(fontSize: 12),
+                                    )
+                                  ],
+                                )
+                              : const Icon(Icons.download))
+
+                  //  Text(
+                  //   widget.time,
+                  //   style: const TextStyle(
+                  //       fontSize: 14,
+                  //       fontWeight: FontWeight.w500,
+                  //       color: CustomColors.mainColor),
+                  // ),
+                  ),
             ],
           ),
           verticalSpacer(4),
