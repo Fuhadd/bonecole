@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../widgets/end_drawer.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
   static const routeName = '/homepage';
@@ -34,26 +36,27 @@ class _HomeScreenState extends State<HomeScreen> {
           "assets/icons/bonecole_icon.svg",
           height: 50,
         ),
-        // actions: [
-        //   Builder(builder: (context) {
-        //     return GestureDetector(
-        //       onTap: () {
-        //         Scaffold.of(context).openEndDrawer();
-        //       },
-        //       child: Padding(
-        //         padding: const EdgeInsets.only(right: 20.0),
-        //         child: SvgPicture.asset(
-        //           "assets/icons/menu_icon.svg",
-        //           height: 14,
-        //         ),
-        //       ),
-        //     );
-        //   })
-        // ],
+        actions: [
+          Builder(builder: (context) {
+            return GestureDetector(
+              onTap: () {
+                Scaffold.of(context).openEndDrawer();
+              },
+              child: Padding(
+                padding: const EdgeInsets.only(right: 30.0),
+                child: SvgPicture.asset(
+                  "assets/icons/menu_icon.svg",
+                  height: 14,
+                ),
+              ),
+            );
+          })
+        ],
       ),
-      // endDrawer: const Drawer(
-      //   child: EndDrawer(),
-      // ),
+      endDrawer: const Drawer(
+        backgroundColor: Colors.black,
+        child: EndDrawer(),
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(

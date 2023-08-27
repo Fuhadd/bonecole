@@ -160,6 +160,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         // sign in button
                         MyButton(
                           isLoading: loginVM.isLoading,
+                          title: "Sign In",
                           onTap: () {
                             FocusScope.of(context).unfocus();
                             bool? validate = _formKey.currentState?.validate();

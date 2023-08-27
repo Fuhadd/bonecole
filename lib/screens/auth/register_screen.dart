@@ -170,24 +170,25 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                         ),
                         const SizedBox(height: 15),
                         // forgot password?
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                'Forgot Password?',
-                                style: TextStyle(color: Colors.grey[600]),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.end,
+                        //     children: [
+                        //       Text(
+                        //         'Forgot Password?',
+                        //         style: TextStyle(color: Colors.grey[600]),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
 
                         const SizedBox(height: 25),
 
                         // sign in button
                         MyButton(
                           isLoading: registerVM.isLoading,
+                          title: "Sign Up",
                           onTap: () {
                             FocusScope.of(context).unfocus();
                             bool? validate = _formKey.currentState?.validate();

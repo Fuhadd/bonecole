@@ -6,11 +6,13 @@ class MyButton extends StatelessWidget {
   final Function()? onTap;
   final Color color;
   final bool isLoading;
+  final String title;
 
   const MyButton(
       {super.key,
       required this.onTap,
       this.color = Colors.black,
+      required this.title,
       this.isLoading = false});
 
   @override
@@ -30,9 +32,9 @@ class MyButton extends StatelessWidget {
               ? const CircularProgressIndicator(
                   color: CustomColors.whiteColor,
                 )
-              : const Text(
-                  "Sign In",
-                  style: TextStyle(
+              : Text(
+                  title,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,

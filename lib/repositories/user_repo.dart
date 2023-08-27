@@ -45,12 +45,12 @@ class UserRepositoryImpl implements UserRepository {
         return null;
       }
     } on FirebaseAuthException catch (error) {
-      var message = 'An Error Occures';
+      var message = error.message;
       switch (error.code) {
         case 'invalid-email:':
           message = 'Email is Invalid!';
           break;
-        case 'email-already-in-use:':
+        case 'email-already-in-use':
           message =
               'The email address already exists.Please proceed to login Screen ';
           break;
@@ -58,8 +58,8 @@ class UserRepositoryImpl implements UserRepository {
           message = 'Invalid password. Please enter correct password.';
           break;
       }
+      print(error.code);
       throw Exception(message);
-      print(message);
     }
   }
 
@@ -100,7 +100,7 @@ class UserRepositoryImpl implements UserRepository {
         return user;
       }
     } on FirebaseAuthException catch (error) {
-      var message = 'An error has occured.'; // default message
+      var message = error.message; // default message
       switch (error.code) {
         case 'user-disabled':
           message =
