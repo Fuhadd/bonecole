@@ -36,4 +36,26 @@ class ScreenViewModel extends BaseChangeNotifier {
     }
     throw ("Error getting dashboard Data!");
   }
+
+  Future<List<CourseModel>> getAllCurriculums() async {
+    try {
+      final res = await userRepository.getAllCurriculums();
+      return res;
+    } catch (e, stacktrace) {
+      log(e.toString());
+      log(stacktrace.toString());
+    }
+    throw ("Error getting dashboard Data!");
+  }
+
+  Future<List<DownloadedCourseModel>> getAllDownloadedCurriculums() async {
+    try {
+      final res = await userRepository.getAllDownloadedCurriculums();
+      return res;
+    } catch (e, stacktrace) {
+      log(e.toString());
+      log(stacktrace.toString());
+    }
+    throw ("Error getting dashboard Data!");
+  }
 }

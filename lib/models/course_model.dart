@@ -68,3 +68,23 @@ class CurriculumResultModel {
         "courses": courses,
       };
 }
+
+class DownloadedCourseModel {
+  CourseModel course;
+  String downloadedPath;
+
+  DownloadedCourseModel({
+    required this.course,
+    required this.downloadedPath,
+  });
+
+  factory DownloadedCourseModel.fromJson(json) => DownloadedCourseModel(
+        course: json["course"] ?? "",
+        downloadedPath: json["downloadedPath"] ?? "",
+      );
+
+  Map<String, dynamic> toJson() => {
+        "course": course,
+        "downloadedPath": downloadedPath,
+      };
+}

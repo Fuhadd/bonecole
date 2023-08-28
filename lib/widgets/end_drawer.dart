@@ -1,16 +1,25 @@
+import 'package:bonecole/screens/my_courses_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../models/course_model.dart';
 import '../screens/homescreen.dart';
-import '../screens/tous_page.dart';
+import '../screens/screens_view_model.dart';
+import '../utils/custom_colors.dart';
 import '../utils/spacers.dart';
 
-class EndDrawer extends StatelessWidget {
+class EndDrawer extends StatefulWidget {
   const EndDrawer({
     super.key,
   });
 
+  @override
+  State<EndDrawer> createState() => _EndDrawerState();
+}
+
+class _EndDrawerState extends State<EndDrawer> {
+  bool isLoading = false;
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -63,9 +72,20 @@ class EndDrawer extends StatelessWidget {
         SideMenus(
           title: "My Courses",
           icon: FontAwesomeIcons.book,
-          onTap: () {
-            Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const TousScreen()));
+          isLoading: isLoading,
+          onTap: () async {
+            setState(() {
+              isLoading = true;
+            });
+            List<DownloadedCourseModel> curriculums =
+                await ScreenViewModel().getAllDownloadedCurriculums();
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => MyCoursesScreen(
+                      curriculums: curriculums,
+                    )));
+            setState(() {
+              isLoading = false;
+            });
           },
         ),
         // verticalSpacer(10),
@@ -93,11 +113,13 @@ class SideMenus extends StatelessWidget {
   final String title;
   final IconData icon;
   final void Function()? onTap;
+  final bool isLoading;
   const SideMenus({
     super.key,
     required this.title,
     required this.icon,
     this.onTap,
+    this.isLoading = false,
   });
 
   @override
@@ -123,6 +145,20 @@ class SideMenus extends StatelessWidget {
                 color: Colors.white,
               ),
             ),
+            isLoading
+                ? Row(
+                    children: [
+                      horizontalSpacer(10),
+                      const SizedBox(
+                        height: 25,
+                        width: 25,
+                        child: CircularProgressIndicator(
+                          color: CustomColors.whiteColor,
+                        ),
+                      )
+                    ],
+                  )
+                : const SizedBox.shrink(),
           ],
         ),
         onTap: onTap,

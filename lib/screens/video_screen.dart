@@ -214,6 +214,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                 children: [
                   IconButton(
                     onPressed: () async {
+                      Navigator.pop(context);
                       // await FirestoreRepository().saveContinueWatching(
                       //     widget.movie.id!, widget.duration);
                       // Navigator.pushReplacement(

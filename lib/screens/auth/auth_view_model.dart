@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:bonecole/screens/homescreen.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -152,4 +153,8 @@ class AuthViewModel extends BaseChangeNotifier {
 
 final propertyNameProvider = StateProvider.autoDispose<String?>((ref) => null);
 final roomNameProvider = StateProvider.autoDispose<String?>((ref) => null);
-final loadingProvider = StateProvider.autoDispose<bool>((ref) => false);
+final isPlayingProvider = StateProvider.autoDispose<bool>((ref) => false);
+final playerProvider = StateProvider<AudioPlayer>((ref) => AudioPlayer());
+
+final durationProvider = StateProvider<Duration>((ref) => Duration.zero);
+final positionProvider = StateProvider<Duration>((ref) => Duration.zero);

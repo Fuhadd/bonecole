@@ -9,8 +9,10 @@ import 'package:bonecole/utils/pdf_api.dart';
 import 'package:bonecole/utils/spacers.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as Path;
 
@@ -18,8 +20,9 @@ import '../models/course_model.dart';
 import '../utils/directory_path.dart';
 import '../utils/random_image.dart';
 import 'audio_player_screen.dart';
+import 'auth/auth_view_model.dart';
 
-class BookDetailScreen extends StatefulWidget {
+class BookDetailScreen extends StatefulHookConsumerWidget {
   final BookModel book;
   final List<CurriculumResultModel> curriculums;
 
@@ -31,20 +34,24 @@ class BookDetailScreen extends StatefulWidget {
   static const routeName = '/bookdetails';
 
   @override
-  State<BookDetailScreen> createState() => _BookDetailScreenState();
+  ConsumerState<BookDetailScreen> createState() => _BookDetailScreenState();
 }
 
-class _BookDetailScreenState extends State<BookDetailScreen> {
+class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
   bool isPdfLoading = false;
-  final audioPlayer = AudioPlayer();
-  bool isPlaying = false;
+  // final audioPlayer = AudioPlayer();
+  // bool isPlaying = false;
   bool isLoading = false;
-  Duration duration = Duration.zero;
-  Duration position = Duration.zero;
+  // Duration duration = Duration.zero;
+  // Duration position = Duration.zero;
   String imageUrl = "";
   @override
   void initState() {
     // TODO: implement initState
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     super.initState();
     imageUrl = getImage();
 
@@ -78,39 +85,40 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
     // }
 
     // Listen to states: playing, paused, stopped
-    audioPlayer.onPlayerStateChanged.listen((state) {
-      if (mounted) {
-        // Check if the widget is still mounted
-        setState(() {
-          isPlaying = state == PlayerState.playing;
-        });
-      }
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.watch(playerProvider).onPlayerStateChanged.listen((state) {
+        if (mounted) {
+          // Check if the widget is still mounted
 
-    //Listen to audio duration
-    audioPlayer.onDurationChanged.listen((newDuration) {
-      if (mounted) {
-        // Check if the widget is still mounted
-        setState(() {
-          duration = newDuration;
-        });
-      }
-    });
+          ref.read(isPlayingProvider.notifier).state =
+              state == PlayerState.playing;
+        }
+      });
 
-    //Listen to audio position
-    audioPlayer.onPositionChanged.listen((newPosition) {
-      if (mounted) {
-        // Check if the widget is still mounted
-        setState(() {
-          position = newPosition;
-        });
-      }
+      //Listen to audio duration
+      ref.watch(playerProvider).onDurationChanged.listen((newDuration) {
+        if (mounted) {
+          // Check if the widget is still mounted
+
+          ref.read(durationProvider.notifier).state = newDuration;
+        }
+      });
+
+      //Listen to audio position
+      ref.watch(playerProvider).onPositionChanged.listen((newPosition) {
+        if (mounted) {
+          // Check if the widget is still mounted
+          setState(() {
+            ref.read(positionProvider.notifier).state = newPosition;
+          });
+        }
+      });
     });
   }
 
   void playAudio(bool isDownloaded, String audioUrl) {
     if (true) {
-      audioPlayer.dispose();
+      ref.watch(playerProvider).dispose();
       setState(() {
         isLoading = true;
       });
@@ -122,13 +130,16 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
       // }
       if (isDownloaded) {
         final videoFile = File(audioUrl);
-        audioPlayer.play(DeviceFileSource(audioUrl)).then((value) {
+        ref
+            .watch(playerProvider)
+            .play(DeviceFileSource(audioUrl))
+            .then((value) {
           setState(() {
             isLoading = false;
           });
         });
       } else {
-        audioPlayer.play(UrlSource(audioUrl)).then((value) {
+        ref.watch(playerProvider).play(UrlSource(audioUrl)).then((value) {
           setState(() {
             isLoading = false;
           });
@@ -183,7 +194,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
         children: [
           SingleChildScrollView(
             child: SizedBox(
-              height: MediaQuery.of(context).size.height * 3,
+              height: MediaQuery.of(context).size.height * 5,
               child: Center(
                 child: Column(
                   children: [
@@ -327,7 +338,7 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                 verticalSpacer(40),
                                 GestureDetector(
                                   onTap: () {
-                                    print(isPlaying);
+                                    print(ref.watch(isPlayingProvider));
                                   },
                                   child: Container(
                                     height: 50,
@@ -451,21 +462,24 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                           title: course.title,
                                           time: course.duration,
                                           fileUrl: course.lessonUrl,
-                                          duration: duration,
+                                          // duration: duration,
                                           isLoading: isLoading,
-                                          isPlaying: isPlaying,
-                                          position: position,
-                                          audioPlayer: audioPlayer,
+                                          uid: course.uid,
+                                          // isPlaying: isPlaying,
+                                          // position: position,
+                                          // audioPlayer: audioPlayer,
                                         );
                                       } else {
                                         return CurriculumList(
                                           title: course.title,
                                           time: course.duration,
                                           fileUrl: course.lessonUrl,
+                                          uid: course.uid,
                                         );
                                       }
                                     }).toList(),
                                   ),
+                                  verticalSpacer(15),
                                   //   SizedBox(
                                   //     height: 400,
                                   //     child: ListView.builder(
@@ -588,7 +602,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
             ),
           ),
           Visibility(
-            visible: isPlaying || audioPlayer.state == PlayerState.paused,
+            visible: ref.watch(isPlayingProvider) ||
+                ref.watch(playerProvider).state == PlayerState.paused,
             child: Positioned(
               bottom: 20,
               child: Center(
@@ -617,24 +632,29 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                                 color: CustomColors.whiteColor,
                               )
                             : Icon(
-                                isPlaying ? Icons.pause : Icons.play_arrow,
+                                ref.watch(isPlayingProvider)
+                                    ? Icons.pause
+                                    : Icons.play_arrow,
                                 color: Colors.white,
                                 size: 26,
                               ),
                         // iconSize: 20,
                         onPressed: () async {
-                          if (isPlaying) {
-                            await audioPlayer.pause();
+                          if (ref.watch(isPlayingProvider)) {
+                            await ref.watch(playerProvider).pause();
                           } else {
-                            setState(() {
-                              isLoading = true;
-                            });
-                            String url =
-                                "https://firebasestorage.googleapis.com/v0/b/bonecole-2f0f4.appspot.com/o/4-things-i-wish-i-knew-in-my-20s-128-ytshorts.savetube.me.mp3?alt=media&token=a592f319-9ae1-441b-9979-a6bad33812ff";
-                            await audioPlayer.play(UrlSource(url));
-                            setState(() {
-                              isLoading = false;
-                            });
+                            await ref.watch(playerProvider).resume();
+                            // setState(() {
+                            //   isLoading = true;
+                            // });
+                            // String url =
+                            //     "https://firebasestorage.googleapis.com/v0/b/bonecole-2f0f4.appspot.com/o/4-things-i-wish-i-knew-in-my-20s-128-ytshorts.savetube.me.mp3?alt=media&token=a592f319-9ae1-441b-9979-a6bad33812ff";
+                            // await ref
+                            //     .watch(playerProvider)
+                            //     .play(UrlSource(url));
+                            // setState(() {
+                            //   isLoading = false;
+                            // });
                           }
                         },
                       ),
@@ -644,13 +664,22 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
                             inactiveColor:
                                 CustomColors.lightOrange.withOpacity(0.5),
                             min: 0,
-                            max: duration.inSeconds.toDouble(),
-                            value: position.inSeconds.toDouble(),
+                            max: ref
+                                .read(durationProvider.notifier)
+                                .state
+                                .inSeconds
+                                .toDouble(),
+                            value: ref
+                                .read(positionProvider.notifier)
+                                .state
+                                .inSeconds
+                                .toDouble(),
                             onChanged: (value) async {}),
                       ),
 
                       Text(
-                        formatTime(duration - position),
+                        formatTime(ref.read(durationProvider.notifier).state -
+                            ref.read(positionProvider.notifier).state),
                         style: const TextStyle(
                             color: Colors.white, fontWeight: FontWeight.w500),
                       ),
@@ -675,10 +704,12 @@ class CurriculumList extends StatefulWidget {
       {super.key,
       required this.title,
       required this.time,
-      required this.fileUrl});
+      required this.fileUrl,
+      required this.uid});
   final String title;
   final String time;
   final String fileUrl;
+  final String uid;
 
   @override
   State<CurriculumList> createState() => _CurriculumListState();
@@ -693,10 +724,10 @@ class _CurriculumListState extends State<CurriculumList> {
   late CancelToken cancelToken;
   var getPathFile = DirectoryPath();
 
-  startDownload() async {
+  startDownload(String courseId) async {
     cancelToken = CancelToken();
     var storePath = await getPathFile.getPath();
-    filePath = '$storePath/$fileName';
+    filePath = '$storePath/$courseId';
     setState(() {
       dowloading = true;
       progress = 0;
@@ -763,7 +794,7 @@ class _CurriculumListState extends State<CurriculumList> {
         body: "body");
     return GestureDetector(
       onTap: () {
-        Navigator.pushReplacement(
+        Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => VideoScreen(
@@ -813,7 +844,7 @@ class _CurriculumListState extends State<CurriculumList> {
                         fileExists && dowloading == false
                             // ? openfile()
                             ? null
-                            : startDownload();
+                            : startDownload(widget.uid);
                       },
                       icon: fileExists
                           ? const Icon(
@@ -971,32 +1002,35 @@ class _CurriculumListPDFState extends State<CurriculumListPDF> {
       );
 }
 
-class CurriculumListAudio extends StatefulWidget {
+class CurriculumListAudio extends StatefulHookConsumerWidget {
   CurriculumListAudio({
     super.key,
     required this.title,
     required this.time,
     required this.fileUrl,
-    required this.duration,
+    // required this.duration,
     required this.isLoading,
-    required this.isPlaying,
-    required this.position,
-    required this.audioPlayer,
+    required this.uid,
+    // required this.isPlaying,
+    // required this.position,
+    // required this.audioPlayer,
   });
   final String title;
   final String time;
   final String fileUrl;
-  final Duration duration;
-  final Duration position;
-  final bool isPlaying;
+  final String uid;
+  // final Duration duration;
+  // final Duration position;
+  // final bool isPlaying;
   bool isLoading;
-  final AudioPlayer audioPlayer;
+  // final AudioPlayer audioPlayer;
 
   @override
-  State<CurriculumListAudio> createState() => _CurriculumListAudioState();
+  ConsumerState<CurriculumListAudio> createState() =>
+      _CurriculumListAudioState();
 }
 
-class _CurriculumListAudioState extends State<CurriculumListAudio> {
+class _CurriculumListAudioState extends ConsumerState<CurriculumListAudio> {
   bool dowloading = false;
   bool fileExists = false;
   double progress = 0;
@@ -1011,41 +1045,41 @@ class _CurriculumListAudioState extends State<CurriculumListAudio> {
   // Duration duration = Duration.zero;
   // Duration position = Duration.zero;
 
-  void playAudio(bool isDownloaded, String audioUrl) {
-    if (widget.isPlaying) {
-      widget.audioPlayer.state = PlayerState.stopped;
+  void playAudio(bool isDownloaded, String audioUrl) async {
+    if (ref.watch(isPlayingProvider)) {
+      await ref.watch(playerProvider).stop();
     }
-    if (!widget.isPlaying) {
-      setState(() {
-        widget.isLoading = true;
+    // if (!widget.isPlaying) {
+    setState(() {
+      widget.isLoading = true;
+    });
+    //       if (widget.isDownloaded) {
+    //   final videoFile = File(widget.videpPath);
+    //   _videoPlayerController = VideoPlayerController.file(videoFile);
+    // } else {
+    //   _videoPlayerController = VideoPlayerController.network(widget.videpPath);
+    // }
+    if (isDownloaded) {
+      final videoFile = File(audioUrl);
+      ref.watch(playerProvider).play(DeviceFileSource(audioUrl)).then((value) {
+        setState(() {
+          widget.isLoading = false;
+        });
       });
-      //       if (widget.isDownloaded) {
-      //   final videoFile = File(widget.videpPath);
-      //   _videoPlayerController = VideoPlayerController.file(videoFile);
-      // } else {
-      //   _videoPlayerController = VideoPlayerController.network(widget.videpPath);
-      // }
-      if (isDownloaded) {
-        final videoFile = File(audioUrl);
-        widget.audioPlayer.play(DeviceFileSource(audioUrl)).then((value) {
-          setState(() {
-            widget.isLoading = false;
-          });
+    } else {
+      ref.watch(playerProvider).play(UrlSource(audioUrl)).then((value) {
+        setState(() {
+          widget.isLoading = false;
         });
-      } else {
-        widget.audioPlayer.play(UrlSource(audioUrl)).then((value) {
-          setState(() {
-            widget.isLoading = false;
-          });
-        });
-      }
+      });
     }
+    // }
   }
 
-  startDownload() async {
+  startDownload(String courseId) async {
     cancelToken = CancelToken();
     var storePath = await getPathFile.getPath();
-    filePath = '$storePath/$fileName';
+    filePath = '$storePath/$courseId';
     setState(() {
       dowloading = true;
       progress = 0;
@@ -1177,7 +1211,7 @@ class _CurriculumListAudioState extends State<CurriculumListAudio> {
                         fileExists && dowloading == false
                             // ? openfile()
                             ? null
-                            : startDownload();
+                            : startDownload(widget.uid);
                       },
                       icon: fileExists
                           ? const Icon(

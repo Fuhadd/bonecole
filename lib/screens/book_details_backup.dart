@@ -619,7 +619,7 @@ class _CurriculumListState extends State<CurriculumList> {
         body: "body");
     return GestureDetector(
       onTap: () {
-        Navigator.pushReplacement(
+        Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => VideoScreen(
