@@ -8,5 +8,6 @@ class CustomColors {
   static const lightOrange = Color(0xFFe07f79);
   static const orange = Color(0xFFcc4436);
   static const blackIconColor = Color.fromRGBO(80, 85, 92, 1);
+  static const greyBgColor = Color(0xFF5B5D63);
   // static const blackIconColor = Color.fromRGBO(80, 85, 92, 1);
 }

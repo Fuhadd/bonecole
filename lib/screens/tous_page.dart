@@ -268,7 +268,7 @@ class _TousScreenState extends State<TousScreen>
                   ],
                 )),
                 // const TousGridview(),
-                verticalSpacer(50),
+                // verticalSpacer(50),
               ],
             ),
           ),

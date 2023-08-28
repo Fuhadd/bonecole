@@ -152,3 +152,4 @@ class AuthViewModel extends BaseChangeNotifier {
 
 final propertyNameProvider = StateProvider.autoDispose<String?>((ref) => null);
 final roomNameProvider = StateProvider.autoDispose<String?>((ref) => null);
+final loadingProvider = StateProvider.autoDispose<bool>((ref) => false);

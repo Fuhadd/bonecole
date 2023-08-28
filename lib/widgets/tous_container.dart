@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../models/book_model.dart';
 import '../utils/custom_colors.dart';
+import '../utils/random_image.dart';
 import '../utils/spacers.dart';
 
 class TousContainer extends StatelessWidget {
@@ -38,7 +39,7 @@ class TousContainer extends StatelessWidget {
               height: 100,
               decoration: BoxDecoration(
                   image: DecorationImage(
-                      image: AssetImage(book.imageUrl), fit: BoxFit.cover)),
+                      image: AssetImage(getImage()), fit: BoxFit.cover)),
             ),
           ),
           verticalSpacer(20),
@@ -48,7 +49,7 @@ class TousContainer extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  book.name,
+                  book.title,
                   style: const TextStyle(
                       fontSize: 14.6,
                       fontWeight: FontWeight.w700,
@@ -56,7 +57,7 @@ class TousContainer extends StatelessWidget {
                 ),
                 verticalSpacer(8),
                 Text(
-                  book.author,
+                  book.instructor,
                   style: const TextStyle(
                       fontSize: 13.6,
                       fontWeight: FontWeight.w500,
@@ -65,17 +66,19 @@ class TousContainer extends StatelessWidget {
                 verticalSpacer(20),
                 Row(
                   children: [
-                    Text(
-                      book.newPrice,
-                      style: const TextStyle(
+                    const Text(
+                      "30,000",
+                      // book.newPrice,
+                      style: TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: CustomColors.mainColor),
                     ),
                     horizontalSpacer(5),
-                    Text(
-                      book.oldPrice,
-                      style: const TextStyle(
+                    const Text(
+                      "50,000",
+                      // book.oldPrice,
+                      style: TextStyle(
                           fontSize: 13,
                           decoration: TextDecoration.lineThrough,
                           fontWeight: FontWeight.w500,
@@ -91,9 +94,10 @@ class TousContainer extends StatelessWidget {
                       size: 20,
                     ),
                     horizontalSpacer(10),
-                    Text(
-                      "${book.pages} lecons",
-                      style: const TextStyle(
+                    const Text(
+                      "29 lecons",
+                      // "${book.pages} lecons",
+                      style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: CustomColors.mainColor),
@@ -108,9 +112,10 @@ class TousContainer extends StatelessWidget {
                       size: 20,
                     ),
                     horizontalSpacer(10),
-                    Text(
-                      "${book.timeInHours}H ${book.timeInMinutes} mins",
-                      style: const TextStyle(
+                    const Text(
+                      "2H 21 mins",
+                      // "${book.timeInHours}H ${book.timeInMinutes} mins",
+                      style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
                           color: CustomColors.mainColor),

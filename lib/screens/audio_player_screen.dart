@@ -74,10 +74,6 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
       }
     });
 
-    // Yesterday I didnt really do much, i just continued on my
-    // self development on youtube. And I also went the the firebase
-    //Messaging setup. I haven't really studied it.
-
     //Listen to audio position
     audioPlayer.onPositionChanged.listen((newPosition) {
       if (mounted) {

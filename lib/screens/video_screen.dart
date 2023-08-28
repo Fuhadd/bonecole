@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:bonecole/screens/book_details_screen.dart';
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -217,14 +216,14 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
                     onPressed: () async {
                       // await FirestoreRepository().saveContinueWatching(
                       //     widget.movie.id!, widget.duration);
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => BookDetailScreen(
-                            book: widget.book,
-                          ),
-                        ),
-                      );
+                      // Navigator.pushReplacement(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => BookDetailScreen(
+                      //       book: widget.book,
+                      //     ),
+                      //   ),
+                      // );
                     },
                     icon: const Icon(
                       Icons.arrow_back,

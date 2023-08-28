@@ -36,7 +36,7 @@ class HeaderContainer extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
               child: Container(
-                height: 150,
+                height: 100,
                 decoration: BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage(bookImageUrl), fit: BoxFit.cover)),
@@ -50,14 +50,14 @@ class HeaderContainer extends StatelessWidget {
                   Text(
                     title,
                     style: const TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: CustomColors.mainColor),
                   ),
                   const Text(
                     "Toutes les matieres",
                     style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 18,
                         fontWeight: FontWeight.w700,
                         color: CustomColors.mainColor),
                   ),
@@ -72,7 +72,7 @@ class HeaderContainer extends StatelessWidget {
                       const Text(
                         "30,000 GNF",
                         style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: CustomColors.mainColor),
                       ),
@@ -80,7 +80,7 @@ class HeaderContainer extends StatelessWidget {
                       const Text(
                         "50,000 GNF",
                         style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 16,
                             decoration: TextDecoration.lineThrough,
                             fontWeight: FontWeight.w500,
                             color: CustomColors.mainColor),

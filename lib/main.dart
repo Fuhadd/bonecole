@@ -43,7 +43,17 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: const LoginPage(),
-      // home: const HomeScreen(),
+      // home: BookDetailScreen(
+      //   book: BookModel(
+      //       category: "category",
+      //       categoryId: "categoryId",
+      //       instructor: "instructor",
+      //       subLevel: "subLevel",
+      //       title: "title",
+      //       uid: "uid",
+      //       body: "body"),
+      //   curriculums: const [],
+      // ),
       routes: appRoutes,
     );
   }
