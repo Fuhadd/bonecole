@@ -109,7 +109,8 @@ class _BookDetailScreenState extends State<BookDetailScreen> {
   }
 
   void playAudio(bool isDownloaded, String audioUrl) {
-    if (!isPlaying) {
+    if (true) {
+      audioPlayer.dispose();
       setState(() {
         isLoading = true;
       });
@@ -1011,6 +1012,9 @@ class _CurriculumListAudioState extends State<CurriculumListAudio> {
   // Duration position = Duration.zero;
 
   void playAudio(bool isDownloaded, String audioUrl) {
+    if (widget.isPlaying) {
+      widget.audioPlayer.state = PlayerState.stopped;
+    }
     if (!widget.isPlaying) {
       setState(() {
         widget.isLoading = true;
