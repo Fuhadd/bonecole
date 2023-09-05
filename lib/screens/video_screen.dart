@@ -4,6 +4,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
 import '../models/book_model.dart';
@@ -193,6 +194,28 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     // _videoPlayerController = VideoPlayerController.network(widget.videpPath);
     if (widget.isDownloaded) {
       final videoFile = File(widget.videpPath);
+      // if (Platform.isIOS) {
+      //   var file = File(widget.videpPath);
+
+      //   Uint8List bytes = file.readAsBytesSync();
+
+      //   var buffer = bytes.buffer;
+
+      //   var unit8 = buffer.asUint8List(32, bytes.lengthInBytes - 32);
+      //   getApplicationDocumentsDirectory().then((value) {
+      //     var tmpFile = "$value/tmp.mp4";
+      //     //  audioPlayer.play(urlSource);
+
+      //     _videoPlayerController = VideoPlayerController.file(File(tmpFile));
+      //   });
+
+      //   // var tmpFile = "${dir.path}/tmp.mp4";
+      //   //  audioPlayer.play(urlSource);
+
+      //   // _videoPlayerController = VideoPlayerController.file(File(tmpFile));
+      // } else {
+      //   _videoPlayerController = VideoPlayerController.file(videoFile);
+      // }
       _videoPlayerController = VideoPlayerController.file(videoFile);
     } else {
       _videoPlayerController = VideoPlayerController.network(widget.videpPath);

@@ -313,11 +313,15 @@ class UserRepositoryImpl implements UserRepository {
       var getPathFile = DirectoryPath();
       var storePath = await getPathFile.getPath();
       String filePath = '$storePath/${result.uid}';
-      bool fileExistCheck = await File(filePath).exists();
+      bool fileExistCheck = await File("$filePath.mp3").exists() ||
+          await File("$filePath.mp4").exists();
       if (fileExistCheck) {
         // courseList.add(result);
-        downloadedCourseList.add(
-            DownloadedCourseModel(course: result, downloadedPath: filePath));
+        downloadedCourseList.add(await File("$filePath.mp3").exists()
+            ? DownloadedCourseModel(
+                course: result, downloadedPath: "$filePath.mp3")
+            : DownloadedCourseModel(
+                course: result, downloadedPath: "$filePath.mp4"));
       }
     }
 

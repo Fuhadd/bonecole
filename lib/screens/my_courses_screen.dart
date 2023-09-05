@@ -148,7 +148,7 @@ class _MyCoursesScreenState extends ConsumerState<MyCoursesScreen> {
         body: SizedBox(
           height: MediaQuery.of(context).size.height,
           child: Stack(
-            alignment: Alignment.center,
+            // alignment: Alignment.center,
             children: [
               SingleChildScrollView(
                 child: Center(
@@ -188,10 +188,10 @@ class _MyCoursesScreenState extends ConsumerState<MyCoursesScreen> {
                             // mainAxisAlignment: MainAxisAlignment.start,
                             // crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Row(
+                              const Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                children: const [
+                                children: [
                                   Text(
                                     "Downloads",
                                     // "Chapitre 1: Acide et base en solution aqueuse",
@@ -280,82 +280,88 @@ class _MyCoursesScreenState extends ConsumerState<MyCoursesScreen> {
                     ref.watch(playerProvider).state == PlayerState.paused,
                 child: Positioned(
                   bottom: 20,
-                  child: Center(
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      decoration: BoxDecoration(
-                          color: CustomColors.greyBgColor.withOpacity(0.95),
-                          borderRadius: BorderRadius.circular(10)),
-                      height: 45,
-                      width: MediaQuery.of(context).size.width - 50,
-                      child: Row(
-                        children: [
-                          // Padding(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 16),
-                          //   child: Row(
-                          //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //     children: [
-                          //       Text(formatTime(position)),
-                          //       Text(formatTime(duration - position)),
-                          //     ],
-                          //   ),
-                          // ),
-                          IconButton(
-                            icon: Icon(
-                              ref.watch(isPlayingProvider)
-                                  ? Icons.pause
-                                  : Icons.play_arrow,
-                              color: Colors.white,
-                              size: 26,
-                            ),
-                            // iconSize: 20,
-                            onPressed: () async {
-                              if (ref.watch(isPlayingProvider)) {
-                                await ref.watch(playerProvider).pause();
-                              } else {
-                                await ref.watch(playerProvider).resume();
-                                // setState(() {
-                                //   isLoading = true;
-                                // });
-                                // String url =
-                                //     "https://firebasestorage.googleapis.com/v0/b/bonecole-2f0f4.appspot.com/o/4-things-i-wish-i-knew-in-my-20s-128-ytshorts.savetube.me.mp3?alt=media&token=a592f319-9ae1-441b-9979-a6bad33812ff";
-                                // await ref
-                                //     .watch(playerProvider)
-                                //     .play(UrlSource(url));
-                                // setState(() {
-                                //   isLoading = false;
-                                // });
-                              }
-                            },
-                          ),
-                          Expanded(
-                            child: Slider(
-                                activeColor: CustomColors.whiteColor,
-                                inactiveColor:
-                                    CustomColors.lightOrange.withOpacity(0.5),
-                                min: 0,
-                                max: ref
-                                    .read(durationProvider.notifier)
-                                    .state
-                                    .inSeconds
-                                    .toDouble(),
-                                value: ref
-                                    .read(positionProvider.notifier)
-                                    .state
-                                    .inSeconds
-                                    .toDouble(),
-                                onChanged: (value) async {}),
-                          ),
-
-                          Text(
-                            formatTime(
-                                ref.read(durationProvider.notifier).state -
-                                    ref.read(positionProvider.notifier).state),
-                            style: const TextStyle(
+                  right: 0,
+                  left: 0,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                            color: CustomColors.greyBgColor.withOpacity(0.95),
+                            borderRadius: BorderRadius.circular(10)),
+                        height: 45,
+                        width: MediaQuery.of(context).size.width - 50,
+                        child: Row(
+                          children: [
+                            // Padding(
+                            //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                            //   child: Row(
+                            //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            //     children: [
+                            //       Text(formatTime(position)),
+                            //       Text(formatTime(duration - position)),
+                            //     ],
+                            //   ),
+                            // ),
+                            IconButton(
+                              icon: Icon(
+                                ref.watch(isPlayingProvider)
+                                    ? Icons.pause
+                                    : Icons.play_arrow,
                                 color: Colors.white,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ],
+                                size: 26,
+                              ),
+                              // iconSize: 20,
+                              onPressed: () async {
+                                if (ref.watch(isPlayingProvider)) {
+                                  await ref.watch(playerProvider).pause();
+                                } else {
+                                  await ref.watch(playerProvider).resume();
+                                  // setState(() {
+                                  //   isLoading = true;
+                                  // });
+                                  // String url =
+                                  //     "https://firebasestorage.googleapis.com/v0/b/bonecole-2f0f4.appspot.com/o/4-things-i-wish-i-knew-in-my-20s-128-ytshorts.savetube.me.mp3?alt=media&token=a592f319-9ae1-441b-9979-a6bad33812ff";
+                                  // await ref
+                                  //     .watch(playerProvider)
+                                  //     .play(UrlSource(url));
+                                  // setState(() {
+                                  //   isLoading = false;
+                                  // });
+                                }
+                              },
+                            ),
+                            Expanded(
+                              child: Slider(
+                                  activeColor: CustomColors.whiteColor,
+                                  inactiveColor:
+                                      CustomColors.lightOrange.withOpacity(0.5),
+                                  min: 0,
+                                  max: ref
+                                      .read(durationProvider.notifier)
+                                      .state
+                                      .inSeconds
+                                      .toDouble(),
+                                  value: ref
+                                      .read(positionProvider.notifier)
+                                      .state
+                                      .inSeconds
+                                      .toDouble(),
+                                  onChanged: (value) async {}),
+                            ),
+
+                            Text(
+                              formatTime(ref
+                                      .read(durationProvider.notifier)
+                                      .state -
+                                  ref.read(positionProvider.notifier).state),
+                              style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

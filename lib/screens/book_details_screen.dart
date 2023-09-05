@@ -15,6 +15,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as Path;
+import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import '../models/course_model.dart';
@@ -770,7 +771,7 @@ class _CurriculumListState extends State<CurriculumList> {
   startDownload(String courseId) async {
     cancelToken = CancelToken();
     var storePath = await getPathFile.getPath();
-    filePath = '$storePath/$courseId';
+    filePath = '$storePath/$courseId.mp4';
     setState(() {
       dowloading = true;
       progress = 0;
@@ -803,12 +804,30 @@ class _CurriculumListState extends State<CurriculumList> {
   }
 
   checkFileExit() async {
+    var getUidPathFile = DirectoryPath();
+    var storePathUid = await getUidPathFile.getPath();
+    String filePathUid = '$storePathUid/${widget.uid}.mp4';
+    bool fileExistCheckUid = await File(filePathUid).exists();
+    //
     var storePath = await getPathFile.getPath();
-    filePath = '$storePath/$fileName';
+    filePath = '$storePath/$fileName.mp4';
+
     bool fileExistCheck = await File(filePath).exists();
     setState(() {
-      fileExists = fileExistCheck;
+      if (fileExistCheckUid == true) {
+        fileExists = fileExistCheckUid;
+        filePath = filePathUid;
+      } else {
+        fileExists = fileExistCheck;
+      }
     });
+    setState(() {});
+    // var storePath = await getPathFile.getPath();
+    // filePath = '$storePath/$fileName.mp4';
+    // bool fileExistCheck = await File(filePath).exists();
+    // setState(() {
+    //   fileExists = fileExistCheck;
+    // });
   }
 
   openfile() {
@@ -1171,17 +1190,40 @@ class _CurriculumListAudioState extends ConsumerState<CurriculumListAudio> {
       //   }
       // }
 
-      Future<bool> _requestPermission(Permission permission) async {
-        if (await permission.isGranted) {
-          return true;
-        } else {
-          var result = await permission.request();
-          if (result == PermissionStatus.granted) {
-            return true;
-          }
-        }
-        return false;
-      }
+      // OpenFile.open(widget.fileUrl);
+      // if (Platform.isIOS) {
+      //   var file = File(audioUrl);
+
+      //   Uint8List bytes = file.readAsBytesSync();
+
+      //   var buffer = bytes.buffer;
+
+      //   var unit8 = buffer.asUint8List(32, bytes.lengthInBytes - 32);
+      //   Directory dir = await getApplicationDocumentsDirectory();
+
+      //   var tmpFile = "${dir.path}/tmp.mp3";
+      //   var writeFile = File(tmpFile).writeAsBytesSync(unit8);
+      //   var urlSource = DeviceFileSource(tmpFile);
+      //   //  audioPlayer.play(urlSource);
+
+      //   ref
+      //       .watch(playerProvider)
+      //       .play(DeviceFileSource(urlSource.path))
+      //       .then((value) {
+      //     setState(() {
+      //       widget.isLoading = false;
+      //     });
+      //   });
+      // } else {
+      //   ref
+      //       .watch(playerProvider)
+      //       .play(DeviceFileSource(audioUrl))
+      //       .then((value) {
+      //     setState(() {
+      //       widget.isLoading = false;
+      //     });
+      //   });
+      // }
 
       ref.watch(playerProvider).play(DeviceFileSource(audioUrl)).then((value) {
         setState(() {
@@ -1202,7 +1244,7 @@ class _CurriculumListAudioState extends ConsumerState<CurriculumListAudio> {
   startDownload(String courseId) async {
     cancelToken = CancelToken();
     var storePath = await getPathFile.getPath();
-    filePath = '$storePath/$courseId';
+    filePath = '$storePath/$courseId.mp3';
     setState(() {
       dowloading = true;
       progress = 0;
@@ -1265,11 +1307,11 @@ class _CurriculumListAudioState extends ConsumerState<CurriculumListAudio> {
   checkFileExit() async {
     var getUidPathFile = DirectoryPath();
     var storePathUid = await getUidPathFile.getPath();
-    String filePathUid = '$storePathUid/${widget.uid}';
+    String filePathUid = '$storePathUid/${widget.uid}.mp3';
     bool fileExistCheckUid = await File(filePathUid).exists();
     //
     var storePath = await getPathFile.getPath();
-    filePath = '$storePath/$fileName';
+    filePath = '$storePath/$fileName.mp3';
 
     bool fileExistCheck = await File(filePath).exists();
     setState(() {
