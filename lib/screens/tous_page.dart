@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:bonecole/utils/custom_colors.dart';
 import 'package:bonecole/utils/spacers.dart';
 import 'package:bonecole/widgets/10eme_gridview.dart';
@@ -36,6 +35,13 @@ class _TousScreenState extends ConsumerState<TousScreen>
     ]);
     _currentPage = widget.currentPage;
     super.initState();
+  }
+
+  @override
+  void dispose() async {
+    // TODO: implement dispose
+    super.dispose();
+    await ref.watch(playerProvider).stop();
   }
 
   @override
@@ -293,8 +299,10 @@ class _TousScreenState extends ConsumerState<TousScreen>
             ),
           ),
           Visibility(
-            visible: ref.watch(isPlayingProvider) ||
-                ref.watch(playerProvider).state == PlayerState.paused,
+            // visible: ref.watch(isPlayingProvider) ||
+            //     ref.watch(playerProvider).state == PlayerState.paused ||
+            //     (ref.watch(playerProvider).state == PlayerState.stopped),
+            visible: false,
             child: Positioned(
               bottom: 20,
               child: Center(

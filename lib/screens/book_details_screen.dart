@@ -15,6 +15,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as Path;
+import 'package:permission_handler/permission_handler.dart';
 
 import '../models/course_model.dart';
 import '../utils/directory_path.dart';
@@ -114,6 +115,13 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
         }
       });
     });
+  }
+
+  @override
+  void dispose() async {
+    // TODO: implement dispose
+    super.dispose();
+    await ref.watch(playerProvider).stop();
   }
 
   void playAudio(bool isDownloaded, String audioUrl) {
@@ -455,29 +463,64 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                                   ),
                                   verticalSpacer(20),
 
-                                  Column(
-                                    children: curriculum.courses.map((course) {
-                                      if (course.lessonUrl.endsWith(".mp3")) {
-                                        return CurriculumListAudio(
-                                          title: course.title,
-                                          time: course.duration,
-                                          fileUrl: course.lessonUrl,
-                                          // duration: duration,
-                                          isLoading: isLoading,
-                                          uid: course.uid,
-                                          // isPlaying: isPlaying,
-                                          // position: position,
-                                          // audioPlayer: audioPlayer,
-                                        );
-                                      } else {
-                                        return CurriculumList(
-                                          title: course.title,
-                                          time: course.duration,
-                                          fileUrl: course.lessonUrl,
-                                          uid: course.uid,
-                                        );
-                                      }
-                                    }).toList(),
+                                  curriculum.courses.isEmpty
+                                      ? Column(
+                                          children: [
+                                            // verticalSpacer(10),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              children: [
+                                                horizontalSpacer(30),
+                                                const Expanded(
+                                                  child: Text(
+                                                    "No Courses Available for now, try again soon",
+                                                    // "Chapitre 1: Acide et base en solution aqueuse",
+                                                    style: TextStyle(
+                                                        fontSize: 15,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        color: CustomColors
+                                                            .mainColor),
+                                                  ),
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                )
+                                              ],
+                                            ),
+                                            verticalSpacer(10),
+                                          ],
+                                        )
+                                      : Column(
+                                          children:
+                                              curriculum.courses.map((course) {
+                                            if (course.lessonUrl
+                                                .endsWith(".mp3")) {
+                                              return CurriculumListAudio(
+                                                title: course.title,
+                                                time: course.duration,
+                                                fileUrl: course.lessonUrl,
+                                                // duration: duration,
+                                                isLoading: isLoading,
+                                                uid: course.uid,
+                                                // isPlaying: isPlaying,
+                                                // position: position,
+                                                // audioPlayer: audioPlayer,
+                                              );
+                                            } else {
+                                              return CurriculumList(
+                                                title: course.title,
+                                                time: course.duration,
+                                                fileUrl: course.lessonUrl,
+                                                uid: course.uid,
+                                              );
+                                            }
+                                          }).toList(),
+                                        ),
+
+                                  const CurriculumQuiz(
+                                    title: "QCM sample1",
                                   ),
                                   verticalSpacer(15),
                                   //   SizedBox(
@@ -1060,13 +1103,93 @@ class _CurriculumListAudioState extends ConsumerState<CurriculumListAudio> {
     //   _videoPlayerController = VideoPlayerController.network(widget.videpPath);
     // }
     if (isDownloaded) {
+      print(audioUrl);
       final videoFile = File(audioUrl);
+      print(videoFile);
+
+      // ref
+      //     .watch(playerProvider)
+      //     .setSource(DeviceFileSource(audioUrl))
+      //     .then((value) {
+      //   setState(() {
+      //     widget.isLoading = false;
+      //   });
+      // });
+
+      // final videoFile = File(audioUrl);
+
+      // Future<bool> saveVideo(String url, String fileName) async {
+      //   Directory directory;
+      //   try {
+      //     if (Platform.isAndroid) {
+      //       if (await _requestPermission(Permission.storage)) {
+      //         directory = await getExternalStorageDirectory();
+      //         String newPath = "";
+      //         print(directory);
+      //         List<String> paths = directory.path.split("/");
+      //         for (int x = 1; x < paths.length; x++) {
+      //           String folder = paths[x];
+      //           if (folder != "Android") {
+      //             newPath += "/$folder";
+      //           } else {
+      //             break;
+      //           }
+      //         }
+      //         newPath = "$newPath/RPSApp";
+      //         directory = Directory(newPath);
+      //       } else {
+      //         return false;
+      //       }
+      //     } else {
+      //       if (await _requestPermission(Permission.photos)) {
+      //         directory = await getTemporaryDirectory();
+      //       } else {
+      //         return false;
+      //       }
+      //     }
+      //     File saveFile = File("${directory.path}/$fileName");
+      //     if (!await directory.exists()) {
+      //       await directory.create(recursive: true);
+      //     }
+      //     if (await directory.exists()) {
+      //       await dio.download(url, saveFile.path,
+      //           onReceiveProgress: (value1, value2) {
+      //         setState(() {
+      //           progress = value1 / value2;
+      //         });
+      //       });
+      //       if (Platform.isIOS) {
+      //         await ImageGallerySaver.saveFile(saveFile.path,
+      //             isReturnPathOfIOS: true);
+      //       }
+      //       return true;
+      //     }
+      //     return false;
+      //   } catch (e) {
+      //     print(e);
+      //     return false;
+      //   }
+      // }
+
+      Future<bool> _requestPermission(Permission permission) async {
+        if (await permission.isGranted) {
+          return true;
+        } else {
+          var result = await permission.request();
+          if (result == PermissionStatus.granted) {
+            return true;
+          }
+        }
+        return false;
+      }
+
       ref.watch(playerProvider).play(DeviceFileSource(audioUrl)).then((value) {
         setState(() {
           widget.isLoading = false;
         });
       });
     } else {
+      print(audioUrl);
       ref.watch(playerProvider).play(UrlSource(audioUrl)).then((value) {
         setState(() {
           widget.isLoading = false;
@@ -1104,6 +1227,34 @@ class _CurriculumListAudioState extends ConsumerState<CurriculumListAudio> {
     }
   }
 
+  // startDownload(String courseId) async {
+  //   cancelToken = CancelToken();
+  //   var storePath = await getPathFile.getPath();
+  //   filePath = '$storePath/$courseId';
+  //   setState(() {
+  //     dowloading = true;
+  //     progress = 0;
+  //   });
+
+  //   try {
+  //     await Dio().download(widget.fileUrl, filePath,
+  //         onReceiveProgress: (count, total) {
+  //       setState(() {
+  //         progress = (count / total);
+  //       });
+  //     }, cancelToken: cancelToken);
+  //     setState(() {
+  //       dowloading = false;
+  //       fileExists = true;
+  //     });
+  //   } catch (e) {
+  //     print(e);
+  //     setState(() {
+  //       dowloading = false;
+  //     });
+  //   }
+  // }
+
   cancelDownload() {
     cancelToken.cancel();
     setState(() {
@@ -1112,12 +1263,24 @@ class _CurriculumListAudioState extends ConsumerState<CurriculumListAudio> {
   }
 
   checkFileExit() async {
+    var getUidPathFile = DirectoryPath();
+    var storePathUid = await getUidPathFile.getPath();
+    String filePathUid = '$storePathUid/${widget.uid}';
+    bool fileExistCheckUid = await File(filePathUid).exists();
+    //
     var storePath = await getPathFile.getPath();
     filePath = '$storePath/$fileName';
+
     bool fileExistCheck = await File(filePath).exists();
     setState(() {
-      fileExists = fileExistCheck;
+      if (fileExistCheckUid == true) {
+        fileExists = fileExistCheckUid;
+        filePath = filePathUid;
+      } else {
+        fileExists = fileExistCheck;
+      }
     });
+    setState(() {});
   }
 
   openfile() {
@@ -1246,6 +1409,278 @@ class _CurriculumListAudioState extends ConsumerState<CurriculumListAudio> {
                   //       color: CustomColors.mainColor),
                   // ),
                   ),
+            ],
+          ),
+          verticalSpacer(4),
+          const Divider(
+            thickness: 2,
+            indent: 20,
+            endIndent: 20,
+          ),
+          verticalSpacer(10),
+        ],
+      ),
+    );
+  }
+}
+
+class CurriculumQuiz extends StatefulHookConsumerWidget {
+  const CurriculumQuiz({
+    super.key,
+    required this.title,
+  });
+  final String title;
+
+  @override
+  ConsumerState<CurriculumQuiz> createState() => _CurriculumQuizState();
+}
+
+class _CurriculumQuizState extends ConsumerState<CurriculumQuiz> {
+  bool dowloading = false;
+  bool fileExists = false;
+  double progress = 0;
+  String fileName = "";
+  late String filePath;
+  late CancelToken cancelToken;
+  var getPathFile = DirectoryPath();
+  bool isPdfLoading = false;
+  // final audioPlayer = AudioPlayer();
+  // bool isPlaying = false;
+  // bool isLoading = false;
+  // Duration duration = Duration.zero;
+  // Duration position = Duration.zero;
+
+  // void playAudio(bool isDownloaded, String audioUrl) async {
+  //   if (ref.watch(isPlayingProvider)) {
+  //     await ref.watch(playerProvider).stop();
+  //   }
+  //   // if (!widget.isPlaying) {
+  //   setState(() {
+  //     widget.isLoading = true;
+  //   });
+  //   //       if (widget.isDownloaded) {
+  //   //   final videoFile = File(widget.videpPath);
+  //   //   _videoPlayerController = VideoPlayerController.file(videoFile);
+  //   // } else {
+  //   //   _videoPlayerController = VideoPlayerController.network(widget.videpPath);
+  //   // }
+  //   if (isDownloaded) {
+  //     print(audioUrl);
+  //     final videoFile = File(audioUrl);
+  //     print(videoFile);
+
+  //     ref
+  //         .watch(playerProvider)
+  //         .setSource(DeviceFileSource(audioUrl))
+  //         .then((value) {
+  //       setState(() {
+  //         widget.isLoading = false;
+  //       });
+  //     });
+
+  //     // final videoFile = File(audioUrl);
+  //     // ref.watch(playerProvider).play(DeviceFileSource(audioUrl)).then((value) {
+  //     //   setState(() {
+  //     //     widget.isLoading = false;
+  //     //   });
+  //     // });
+  //   } else {
+  //     print(audioUrl);
+  //     ref.watch(playerProvider).play(UrlSource(audioUrl)).then((value) {
+  //       setState(() {
+  //         widget.isLoading = false;
+  //       });
+  //     });
+  //   }
+  //   // }
+  // }
+
+  // startDownload(String courseId) async {
+  //   cancelToken = CancelToken();
+  //   var storePath = await getPathFile.getPath();
+  //   filePath = '$storePath/$courseId';
+  //   setState(() {
+  //     dowloading = true;
+  //     progress = 0;
+  //   });
+
+  //   try {
+  //     await Dio().download(widget.fileUrl, filePath,
+  //         onReceiveProgress: (count, total) {
+  //       setState(() {
+  //         progress = (count / total);
+  //       });
+  //     }, cancelToken: cancelToken);
+  //     setState(() {
+  //       dowloading = false;
+  //       fileExists = true;
+  //     });
+  //   } catch (e) {
+  //     print(e);
+  //     setState(() {
+  //       dowloading = false;
+  //     });
+  //   }
+  // }
+
+  // cancelDownload() {
+  //   cancelToken.cancel();
+  //   setState(() {
+  //     dowloading = false;
+  //   });
+  // }
+
+  // checkFileExit() async {
+  //   var getUidPathFile = DirectoryPath();
+  //   var storePathUid = await getUidPathFile.getPath();
+  //   String filePathUid = '$storePathUid/${widget.uid}';
+  //   bool fileExistCheckUid = await File(filePathUid).exists();
+  //   //
+  //   var storePath = await getPathFile.getPath();
+  //   filePath = '$storePath/$fileName';
+
+  //   bool fileExistCheck = await File(filePath).exists();
+  //   setState(() {
+  //     if (fileExistCheckUid == true) {
+  //       fileExists = fileExistCheckUid;
+  //       filePath = filePathUid;
+  //     } else {
+  //       fileExists = fileExistCheck;
+  //     }
+  //   });
+  //   setState(() {});
+  // }
+
+  // openfile() {
+  //   OpenFile.open(filePath);
+  //   print("fff $filePath");
+  // }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   setState(() {
+  //     fileName = Path.basename(widget.fileUrl);
+  //   });
+  //   checkFileExit();
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    // BookModel headerBook = BookModel(
+    //   name: "Pack 6eme Annee",
+    //   author: "Kabinet Keita",
+    //   newPrice: "30,000",
+    //   oldPrice: "50,000",
+    //   pages: 29,
+    //   timeInHours: 2,
+    //   timeInMinutes: 21,
+    //   imageUrl: 'assets/images/6eannee.png',
+    // );
+    return GestureDetector(
+      // onTap: () => playAudio(
+      //   fileExists,
+      //   fileExists ? filePath : widget.fileUrl,
+      // ),
+
+      // () {
+      //   Navigator.push(
+      //       context,
+      //       MaterialPageRoute(
+      //           builder: (context) => AudioPlayerScreen(
+      //                 isDownloaded: fileExists,
+      //                 // book: headerBook,
+      //                 audioUrl: fileExists ? filePath : widget.fileUrl,
+      //                 // book: headerBook,
+      //                 // startAt: snapshot.data!.docs[index].get("duration"),
+      //               )));
+      // },
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      height: 40,
+                      width: 40,
+                      decoration: const BoxDecoration(
+                          shape: BoxShape.circle, color: CustomColors.orange),
+                      child: const Center(
+                          child:
+                              // widget.isLoading
+                              //     ? const Padding(
+                              //         padding: EdgeInsets.all(10.0),
+                              //         child: CircularProgressIndicator(
+                              //           color: CustomColors.whiteColor,
+                              //         ),
+                              //       )
+                              //     :
+                              Text(
+                        "Q",
+                        style: TextStyle(
+                            color: CustomColors.whiteColor,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 22),
+                      )),
+                    ),
+                    horizontalSpacer(10),
+                    Expanded(
+                      child: Text(
+                        widget.title,
+                        style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: CustomColors.mainColor),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              // Padding(
+              //     padding: const EdgeInsets.only(left: 8.0),
+              //     child: IconButton(
+              //         onPressed: () {
+              //           fileExists && dowloading == false
+              //               // ? openfile()
+              //               ? null
+              //               : startDownload(widget.uid);
+              //         },
+              //         icon: fileExists
+              //             ? const Icon(
+              //                 Icons.save,
+              //                 color: Colors.green,
+              //               )
+              //             : dowloading
+              //                 ? Stack(
+              //                     alignment: Alignment.center,
+              //                     children: [
+              //                       CircularProgressIndicator(
+              //                         value: progress,
+              //                         strokeWidth: 3,
+              //                         backgroundColor: Colors.grey,
+              //                         valueColor:
+              //                             const AlwaysStoppedAnimation<Color>(
+              //                                 Colors.blue),
+              //                       ),
+              //                       Text(
+              //                         "${(progress * 100).toInt()} %",
+              //                         style: const TextStyle(fontSize: 12),
+              //                       )
+              //                     ],
+              //                   )
+              //                 : const Icon(Icons.download))
+
+              //     //  Text(
+              //     //   widget.time,
+              //     //   style: const TextStyle(
+              //     //       fontSize: 14,
+              //     //       fontWeight: FontWeight.w500,
+              //     //       color: CustomColors.mainColor),
+              //     // ),
+              //     ),
             ],
           ),
           verticalSpacer(4),

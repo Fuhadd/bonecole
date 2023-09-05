@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:bonecole/screens/tous_page.dart';
 import 'package:bonecole/utils/custom_colors.dart';
 import 'package:bonecole/utils/spacers.dart';
@@ -409,8 +408,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               ),
             ),
             Visibility(
-              visible: ref.watch(isPlayingProvider) ||
-                  ref.watch(playerProvider).state == PlayerState.paused,
+              visible: false,
+              // visible: ref.watch(isPlayingProvider) ||
+              //     ref.watch(playerProvider).state == PlayerState.paused,
               child: Positioned(
                 bottom: 20,
                 child: Center(

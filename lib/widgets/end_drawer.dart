@@ -1,4 +1,5 @@
 import 'package:bonecole/screens/my_courses_screen.dart';
+import 'package:bonecole/screens/tous_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -94,9 +95,13 @@ class _EndDrawerState extends State<EndDrawer> {
           icon: FontAwesomeIcons.addressBook,
         ),
         // verticalSpacer(10),
-        const SideMenus(
+        SideMenus(
           title: "Chat",
           icon: FontAwesomeIcons.solidMessage,
+          onTap: () {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const TousScreen()));
+          },
         ),
         // verticalSpacer(10),
         const SideMenus(
