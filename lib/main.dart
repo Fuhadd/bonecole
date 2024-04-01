@@ -109,7 +109,7 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
               return const LoginPage();
             }
           }),
-      // home: const LoginPage(),
+      // home: const ProfilePage(),
       // home: BookDetailScreen(
       //   book: BookModel(
       //       category: "category",

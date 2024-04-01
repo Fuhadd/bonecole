@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:bonecole/models/chapters_model.dart';
 import 'package:bonecole/models/course_model.dart';
+import 'package:bonecole/models/teachers_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
 
@@ -11,7 +12,6 @@ import '../../models/app_user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../models/book_model.dart';
-import '../models/user_data.dart';
 import '../utils/directory_path.dart';
 import '../view_model/local_cache/local_cache.dart';
 
@@ -22,15 +22,38 @@ abstract class UserRepository {
   Future logOut();
   Future resetPassword(String email);
   Future<AppUser> fetchCurrentUser();
-  Future<String?> saveUserCredentials(String email, String firstName,
-      String lastName, String password, DateTime accountCreated);
-  Future<UserDataModel?> getUsersCredentials();
+  Future<String?> saveUserCredentials({
+    required String email,
+    required String password,
+    required String fullName,
+    required String telephone,
+    required String classOption,
+    required String facebook,
+    required String affiliate,
+    required String schoolOrigin,
+    required String pvExamen,
+    required String imageUrl,
+    required DateTime accountCreated,
+  });
+  Future<void> updateUserCredentials({
+    required String email,
+    required String fullName,
+    required String telephone,
+    required String classOption,
+    required String facebook,
+    required String affiliate,
+    required String schoolOrigin,
+    required String pvExamen,
+    required String imageUrl,
+  });
+  Future<AppUser?> getUsersCredentials();
   Future<List<BookModel>> getBooksByCourse(String courseId);
   Future<List<BookModel>> getAllBooks();
   Future<List<CurriculumResultModel>> getAllCurriculumsBySection(
       String sectionId);
   Future<List<CourseModel>> getAllCurriculums();
   Future<List<DownloadedCourseModel>> getAllDownloadedCurriculums();
+  Future<List<TeacherModel>> getAllTeachers();
 }
 
 class UserRepositoryImpl implements UserRepository {
@@ -42,13 +65,15 @@ class UserRepositoryImpl implements UserRepository {
 
   FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   CollectionReference firebaseFirestore =
-      FirebaseFirestore.instance.collection('userData');
+      FirebaseFirestore.instance.collection('users');
   CollectionReference sectionFirebaseFirestore =
       FirebaseFirestore.instance.collection('sections');
   CollectionReference chapterFirebaseFirestore =
       FirebaseFirestore.instance.collection('chapters');
   CollectionReference courseFirebaseFirestore =
       FirebaseFirestore.instance.collection('boneCourses');
+  CollectionReference teacherFirebaseFirestore =
+      FirebaseFirestore.instance.collection('teachers');
 
   @override
   Future<User?> createUserWithEmail(String email, String password) async {
@@ -147,19 +172,47 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<String?> saveUserCredentials(String email, String firstName,
-      String lastName, String password, DateTime accountCreated) async {
+  Future<String?> saveUserCredentials({
+    required String email,
+    required String password,
+    required String fullName,
+    required String telephone,
+    required String classOption,
+    required String facebook,
+    required String affiliate,
+    required String schoolOrigin,
+    required String pvExamen,
+    required String imageUrl,
+    required DateTime accountCreated,
+  }) async {
     String? uid = firebaseAuth.currentUser?.uid.toString();
     await firebaseFirestore.doc(uid.toString()).set(
-        {
-          'id': uid.toString(),
-          'email': email,
-          'firstName': firstName,
-          'lastName': lastName,
-          'accountCreated': accountCreated,
-          'timelog': [],
-          'password': password,
-        },
+        imageUrl.isEmpty
+            ? {
+                "email": email,
+                "password": password,
+                "fullName": fullName,
+                "telephone": telephone,
+                "classOption": classOption,
+                "facebook": facebook,
+                "affiliate": affiliate,
+                "schoolOrigin": schoolOrigin,
+                "pvExamen": pvExamen,
+                "accountCreated": accountCreated,
+              }
+            : {
+                "email": email,
+                "password": password,
+                "fullName": fullName,
+                "telephone": telephone,
+                "classOption": classOption,
+                "facebook": facebook,
+                "affiliate": affiliate,
+                "schoolOrigin": schoolOrigin,
+                "pvExamen": pvExamen,
+                "accountCreated": accountCreated,
+                "imageUrl": imageUrl,
+              },
         SetOptions(
           merge: true,
         ));
@@ -167,7 +220,46 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<UserDataModel?> getUsersCredentials() async {
+  Future<void> updateUserCredentials({
+    required String email,
+    required String fullName,
+    required String telephone,
+    required String classOption,
+    required String facebook,
+    required String affiliate,
+    required String schoolOrigin,
+    required String pvExamen,
+    required String imageUrl,
+  }) async {
+    String? uid = firebaseAuth.currentUser?.uid.toString();
+    await firebaseFirestore.doc(uid.toString()).update(
+          imageUrl.isEmpty
+              ? {
+                  "email": email,
+                  "fullName": fullName,
+                  "telephone": telephone,
+                  "classOption": classOption,
+                  "facebook": facebook,
+                  "affiliate": affiliate,
+                  "schoolOrigin": schoolOrigin,
+                  "pvExamen": pvExamen,
+                }
+              : {
+                  "email": email,
+                  "fullName": fullName,
+                  "telephone": telephone,
+                  "classOption": classOption,
+                  "facebook": facebook,
+                  "affiliate": affiliate,
+                  "schoolOrigin": schoolOrigin,
+                  "pvExamen": pvExamen,
+                  "imageUrl": imageUrl,
+                },
+        );
+  }
+
+  @override
+  Future<AppUser?> getUsersCredentials() async {
     try {
       String uid = firebaseAuth.currentUser!.uid;
 
@@ -175,7 +267,7 @@ class UserRepositoryImpl implements UserRepository {
       final snapshot = await appUser.get();
 
       if (snapshot.exists) {
-        return UserDataModel.fromJson(snapshot.data());
+        return AppUser.fromJson(snapshot.data());
       }
     } catch (error) {}
     return null;
@@ -326,5 +418,19 @@ class UserRepositoryImpl implements UserRepository {
     }
 
     return downloadedCourseList;
+  }
+
+  @override
+  Future<List<TeacherModel>> getAllTeachers() async {
+    List<TeacherModel> teachers = [];
+    final QuerySnapshot querySnapshot =
+        await teacherFirebaseFirestore.limit(5).get();
+
+    for (var teacher in querySnapshot.docs) {
+      var result = TeacherModel.fromJson(teacher.data());
+      teachers.add(result);
+    }
+
+    return teachers;
   }
 }

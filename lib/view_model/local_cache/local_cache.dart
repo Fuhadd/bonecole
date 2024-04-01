@@ -1,4 +1,4 @@
-import '../../models/user_data.dart';
+import '../../models/app_user_model.dart';
 
 abstract class LocalCache {
   ///Saves `value` to cache using `key`
@@ -12,5 +12,5 @@ abstract class LocalCache {
 
   // //Retrieves data of current user
   // UserData getUserData();
-  UserDataModel getUserData();
+  AppUser getUserData();
 }

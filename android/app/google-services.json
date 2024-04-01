@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:314467559669:android:04d32bb44746d5a8897dbc",
         "android_client_info": {
-          "package_name": "com.urbanhive.bonecole"
+          "package_name": "com.bonecole.bonecole"
         }
       },
       "oauth_client": [
@@ -34,7 +34,7 @@
               "client_id": "314467559669-rj49h0uh67ae64k1kt7ojo8cis5c17t7.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.urbanhive.bonecole"
+                "bundle_id": "com.bonecole.bonecole"
               }
             }
           ]

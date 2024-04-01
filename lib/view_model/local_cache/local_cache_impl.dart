@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../models/user_data.dart';
+import '../../models/app_user_model.dart';
 import '../../utils/app_logger.dart';
 import '../../utils/custom_string.dart';
 import 'local_cache.dart';
@@ -56,10 +56,10 @@ class LocalCacheImpl implements LocalCache {
   }
 
   @override
-  UserDataModel getUserData() {
+  AppUser getUserData() {
     var res = getFromLocalCache(ConstantString.userJson) as String? ?? '{}';
 
-    return UserDataModel.fromJson(json.decode(res) as Map<String, dynamic>);
+    return AppUser.fromJson(json.decode(res) as Map<String, dynamic>);
   }
 
   // @override

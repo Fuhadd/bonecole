@@ -1,11 +1,15 @@
+import 'package:bonecole/screens/auth/login_page.dart';
 import 'package:bonecole/screens/my_courses_screen.dart';
-import 'package:bonecole/screens/tous_page.dart';
+import 'package:bonecole/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import '../locator.dart';
 import '../models/course_model.dart';
+import '../repositories/user_repo.dart';
 import '../screens/homescreen.dart';
+import '../screens/privacy_policy_screen.dart';
 import '../screens/screens_view_model.dart';
 import '../utils/custom_colors.dart';
 import '../utils/spacers.dart';
@@ -62,7 +66,7 @@ class _EndDrawerState extends State<EndDrawer> {
         // ),
 
         SideMenus(
-          title: "Home",
+          title: "Accueil",
           icon: FontAwesomeIcons.house,
           onTap: () {
             Navigator.of(context).pushReplacement(
@@ -71,7 +75,7 @@ class _EndDrawerState extends State<EndDrawer> {
         ),
         // verticalSpacer(10),
         SideMenus(
-          title: "My Courses",
+          title: "Mes cours achetés",
           icon: FontAwesomeIcons.book,
           isLoading: isLoading,
           onTap: () async {
@@ -90,23 +94,40 @@ class _EndDrawerState extends State<EndDrawer> {
           },
         ),
         // verticalSpacer(10),
-        const SideMenus(
-          title: "My Profile",
-          icon: FontAwesomeIcons.addressBook,
-        ),
-        // verticalSpacer(10),
         SideMenus(
-          title: "Chat",
-          icon: FontAwesomeIcons.solidMessage,
+          title: "Profil",
+          icon: FontAwesomeIcons.addressBook,
           onTap: () {
             Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const TousScreen()));
+                MaterialPageRoute(builder: (context) => const ProfilePage()));
           },
         ),
         // verticalSpacer(10),
-        const SideMenus(
-          title: "Settings",
-          icon: FontAwesomeIcons.gear,
+        // SideMenus(
+        //   title: "Chat",
+        //   icon: FontAwesomeIcons.solidMessage,
+        //   onTap: () {
+        //     Navigator.of(context).pushReplacement(
+        //         MaterialPageRoute(builder: (context) => const TousScreen()));
+        //   },
+        // ),
+        SideMenus(
+          title: "CGU",
+          icon: FontAwesomeIcons.noteSticky,
+          onTap: () {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (context) => const PrivacyPolicyScreen()));
+          },
+        ),
+        // verticalSpacer(10),
+        SideMenus(
+          title: "Se déconnecter",
+          icon: FontAwesomeIcons.arrowRightFromBracket,
+          onTap: () async {
+            await locator<UserRepository>().logOut();
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const LoginPage()));
+          },
         ),
         verticalSpacer(10),
       ],

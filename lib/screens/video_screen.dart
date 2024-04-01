@@ -4,7 +4,6 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
 import '../models/book_model.dart';
@@ -104,51 +103,57 @@ class _VideoScreenState extends State<VideoScreen> {
     var width = (MediaQuery.of(context).size.width - 50);
     var heigth = (MediaQuery.of(context).size.height - 50);
 
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25.0),
-          child: Stack(
-            children: [
-              VideoPlayerWidget(
-                videpPath: widget.videoUrl,
-                // "https://neallusmawubucket001.s3.us-east-2.amazonaws.com/Mawu+Files/Videos/Shadow.mp4",
-                onUpdateDuration: updateCurrentDuration,
-                startAt: Duration(milliseconds: duration),
-                book: widget.book,
-                duration: duration,
-                isDownloaded: widget.isDownloaded,
-              ),
-              // Row(
-              //   children: [
-              //     IconButton(
-              //       onPressed: () {
-              //         Navigator.pushReplacement(
-              //           context,
-              //           MaterialPageRoute(
-              //             builder: (context) => const PlayScreen(),
-              //           ),
-              //         );
-              //       },
-              //       icon: Icon(
-              //         Icons.arrow_back,
-              //         color: CustomColors.orange,
-              //       ),
-              //     ),
-              //     horizontalSpacer(10),
-              //     Text(
-              //       "CC",
-              //       textAlign: TextAlign.left,
-              //       style: TextStyle(
-              //         color: CustomColors.orange,
-              //         fontSize: 20,
-              //         fontWeight: FontWeight.w500,
-              //       ),
-              //     ),
-              //   ],
-              // ),
-            ],
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context);
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 25.0),
+            child: Stack(
+              children: [
+                VideoPlayerWidget(
+                  videpPath: widget.videoUrl,
+                  // "https://neallusmawubucket001.s3.us-east-2.amazonaws.com/Mawu+Files/Videos/Shadow.mp4",
+                  onUpdateDuration: updateCurrentDuration,
+                  startAt: Duration(milliseconds: duration),
+                  book: widget.book,
+                  duration: duration,
+                  isDownloaded: widget.isDownloaded,
+                ),
+                // Row(
+                //   children: [
+                //     IconButton(
+                //       onPressed: () {
+                //         Navigator.pushReplacement(
+                //           context,
+                //           MaterialPageRoute(
+                //             builder: (context) => const PlayScreen(),
+                //           ),
+                //         );
+                //       },
+                //       icon: Icon(
+                //         Icons.arrow_back,
+                //         color: CustomColors.orange,
+                //       ),
+                //     ),
+                //     horizontalSpacer(10),
+                //     Text(
+                //       "CC",
+                //       textAlign: TextAlign.left,
+                //       style: TextStyle(
+                //         color: CustomColors.orange,
+                //         fontSize: 20,
+                //         fontWeight: FontWeight.w500,
+                //       ),
+                //     ),
+                //   ],
+                // ),
+              ],
+            ),
           ),
         ),
       ),

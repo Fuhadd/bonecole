@@ -9,9 +9,11 @@ class HeaderContainer extends StatelessWidget {
     super.key,
     required this.title,
     required this.bookImageUrl,
+    required this.isLoading,
   });
   final String title;
   final String bookImageUrl;
+  final bool isLoading;
 
   @override
   Widget build(BuildContext context) {
@@ -54,13 +56,21 @@ class HeaderContainer extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         color: CustomColors.mainColor),
                   ),
-                  const Text(
-                    "Toutes les matieres",
-                    style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: CustomColors.mainColor),
-                  ),
+                  isLoading
+                      ? const SizedBox(
+                          height: 15,
+                          width: 15,
+                          child: CircularProgressIndicator(
+                            color: CustomColors.blackColor,
+                          ),
+                        )
+                      : const Text(
+                          "Toutes les matieres",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              color: CustomColors.mainColor),
+                        ),
                   const Divider(
                     thickness: 2,
                     indent: 40,

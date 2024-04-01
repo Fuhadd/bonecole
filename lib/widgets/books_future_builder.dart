@@ -31,6 +31,9 @@ class BooksFutureBuilder extends StatefulWidget {
 
 class _BooksFutureBuilderState extends State<BooksFutureBuilder> {
   final Key _futureBuilderKey = UniqueKey();
+  bool isLoading = false;
+  bool isHeaderLoading = false;
+  int currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -109,79 +112,87 @@ class _BooksFutureBuilderState extends State<BooksFutureBuilder> {
             );
           }
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-            child: ListView.builder(
-              // scrollDirection: Axis.horizontal,
-              physics: const NeverScrollableScrollPhysics(),
-              shrinkWrap: true,
-              itemCount: books!.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Column(
-                  children: [
-                    index == 0
-                        ? GestureDetector(
-                            onTap: () async {
-                              List<CurriculumResultModel> curriculums =
-                                  await ScreenViewModel()
-                                      .getAllCurriculumsBySection(
-                                          books[index].uid);
-                              Navigator.of(context).push(MaterialPageRoute(
-                                  builder: (context) => BookDetailScreen(
-                                        book: books[index],
-                                        curriculums: curriculums,
-                                      )));
-                            },
-                            child: HeaderContainer(
-                              title: widget.category,
-                              bookImageUrl: "assets/images/6eannee.png",
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                    GridView.builder(
-                      shrinkWrap: true,
-                      // clipBehavior: ,// Set to true to enable scrolling in ListView
-                      physics:
-                          const NeverScrollableScrollPhysics(), // Disable scrolling in ListView
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // Set to 2 to display items in pairs
-                        childAspectRatio:
-                            0.54, // Set aspect ratio to 1 to maintain square shape
-                        crossAxisSpacing: 10,
-                        // Set spacing between columns
-                        mainAxisSpacing: 20,
-                      ),
-                      itemCount: books.length,
-                      itemBuilder: (context, index) {
-                        String imageUrl = getImage();
-                        return GestureDetector(
-                          onTap: () async {
+              padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 10),
+              child: Column(
+                children: [
+                  GestureDetector(
+                    onTap: isLoading
+                        ? null
+                        : () async {
+                            setState(() {
+                              isHeaderLoading = true;
+                            });
                             List<CurriculumResultModel> curriculums =
                                 await ScreenViewModel()
-                                    .getAllCurriculumsBySection(
-                                        books[index].uid);
+                                    .getAllCurriculumsBySection(books![0].uid);
                             Navigator.of(context).push(MaterialPageRoute(
                                 builder: (context) => BookDetailScreen(
-                                      book: books[index],
+                                      book: books[0],
                                       curriculums: curriculums,
                                     )));
+                            setState(() {
+                              isHeaderLoading = false;
+                            });
                           },
-                          child: TousContainer(
-                            book: books[index],
-                          ),
-                        );
-                      },
+                    child: HeaderContainer(
+                      title: widget.category,
+                      bookImageUrl: "assets/images/6eannee.png",
+                      isLoading: isHeaderLoading,
                     ),
-                  ],
-                );
+                  ),
+                  // : const SizedBox.shrink(),
+                  GridView.builder(
+                    shrinkWrap: true,
+                    // clipBehavior: ,// Set to true to enable scrolling in ListView
+                    physics:
+                        const NeverScrollableScrollPhysics(), // Disable scrolling in ListView
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2, // Set to 2 to display items in pairs
+                      childAspectRatio:
+                          0.50, // Set aspect ratio to 1 to maintain square shape
+                      crossAxisSpacing: 10,
+                      // Set spacing between columns
+                      mainAxisSpacing: 20,
+                    ),
+                    itemCount: books!.length - 1,
+                    itemBuilder: (context, index) {
+                      String imageUrl = getImage();
+                      return GestureDetector(
+                        onTap: isLoading
+                            ? null
+                            : () async {
+                                setState(() {
+                                  isLoading = true;
+                                  currentIndex = index + 1;
+                                });
+                                List<CurriculumResultModel> curriculums =
+                                    await ScreenViewModel()
+                                        .getAllCurriculumsBySection(
+                                            books[index + 1].uid);
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (context) => BookDetailScreen(
+                                          book: books[index + 1],
+                                          curriculums: curriculums,
+                                        )));
+                                setState(() {
+                                  isLoading = false;
+                                  currentIndex = index + 1;
+                                });
+                              },
+                        child: TousContainer(
+                          book: books[index + 1],
+                          isLoading: isLoading,
+                          index: index + 1,
+                          currentIndex: currentIndex,
+                        ),
+                      );
 
-                //  CommunityPostContainer(
-                //   mainColor: widget.mainColor,
-                //   post: posts[index],
-                // );
-              },
-            ),
-          );
+                      return null;
+                    },
+                  ),
+                ],
+              ));
         }
 
         return Center(

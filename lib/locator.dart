@@ -1,3 +1,4 @@
+import 'package:bonecole/repositories/firebase_storage_repository.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,6 +22,12 @@ Future<void> setupLocator() async {
   );
   locator.registerLazySingleton<UserRepository>(
     () => UserRepositoryImpl(
+      cache: locator(),
+    ),
+  );
+
+  locator.registerLazySingleton<FirebaseStorageRepository>(
+    () => FirebaseStorageRepositoryImpl(
       cache: locator(),
     ),
   );

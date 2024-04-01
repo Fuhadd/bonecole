@@ -10,8 +10,14 @@ class TousContainer extends StatelessWidget {
   const TousContainer({
     super.key,
     required this.book,
+    required this.isLoading,
+    required this.currentIndex,
+    required this.index,
   });
   final BookModel book;
+  final bool isLoading;
+  final int currentIndex;
+  final int index;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -56,13 +62,21 @@ class TousContainer extends StatelessWidget {
                       color: CustomColors.mainColor),
                 ),
                 verticalSpacer(8),
-                Text(
-                  book.instructor,
-                  style: const TextStyle(
-                      fontSize: 13.6,
-                      fontWeight: FontWeight.w500,
-                      color: CustomColors.mainColor),
-                ),
+                isLoading && (index == currentIndex)
+                    ? const SizedBox(
+                        height: 10,
+                        width: 10,
+                        child: CircularProgressIndicator(
+                          color: CustomColors.blackColor,
+                        ),
+                      )
+                    : Text(
+                        book.instructor,
+                        style: const TextStyle(
+                            fontSize: 13.6,
+                            fontWeight: FontWeight.w500,
+                            color: CustomColors.mainColor),
+                      ),
                 verticalSpacer(20),
                 Row(
                   children: [
@@ -88,19 +102,24 @@ class TousContainer extends StatelessWidget {
                 ),
                 verticalSpacer(20),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Icon(
-                      FontAwesomeIcons.bookOpen,
-                      size: 20,
-                    ),
-                    horizontalSpacer(10),
-                    const Text(
-                      "29 lecons",
-                      // "${book.pages} lecons",
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w700,
-                          color: CustomColors.mainColor),
+                    Row(
+                      children: [
+                        const Icon(
+                          FontAwesomeIcons.bookOpen,
+                          size: 20,
+                        ),
+                        horizontalSpacer(10),
+                        const Text(
+                          "29 lecons",
+                          // "${book.pages} lecons",
+                          style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: CustomColors.mainColor),
+                        ),
+                      ],
                     ),
                   ],
                 ),

@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:bonecole/screens/homescreen.dart';
+import 'package:bonecole/screens/profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../models/app_user_model.dart';
@@ -51,8 +54,14 @@ class AuthViewModel extends BaseChangeNotifier {
   Future<void> signUp(
       {required String email,
       required String password,
-      required String firstName,
-      required String lastName,
+      required String fullName,
+      required String telephone,
+      required String classOption,
+      required String facebook,
+      required String affiliate,
+      required String schoolOrigin,
+      required String pvExamen,
+      File? image,
       BuildContext? context}) async {
     try {
       isLoading = true;
@@ -64,11 +73,44 @@ class AuthViewModel extends BaseChangeNotifier {
 
       if (user != null) {
         _email = email;
+
+        String imageUrl = "";
+        if (image != null) {
+          try {
+            imageUrl = await firebaseStorageRepository.uploadImage(image);
+          } catch (e) {
+            isLoading = false;
+            throw (e.toString());
+          }
+        }
+
         var userId = await userRepository.saveUserCredentials(
-            email, firstName, lastName, password, DateTime.now());
+            email: email,
+            password: password,
+            fullName: fullName,
+            telephone: telephone,
+            classOption: classOption,
+            facebook: facebook,
+            affiliate: affiliate,
+            schoolOrigin: schoolOrigin,
+            pvExamen: pvExamen,
+            imageUrl: imageUrl,
+            accountCreated: DateTime.now());
 
         if (userId != null) {
-          AppUser user = AppUser(id: userId, userName: userName, email: email);
+          AppUser user = AppUser(
+            id: userId,
+            email: email,
+            password: password,
+            fullName: fullName,
+            telephone: telephone,
+            classOption: classOption,
+            facebook: facebook,
+            affiliate: affiliate,
+            schoolOrigin: schoolOrigin,
+            imageUrl: imageUrl,
+            pvExamen: pvExamen,
+          );
           final userJson = json.encode(user.toJson());
           localCache.saveToLocalCache(
               key: ConstantString.userJson, value: userJson);
@@ -93,12 +135,70 @@ class AuthViewModel extends BaseChangeNotifier {
       }
     } catch (e, stacktrace) {
       isLoading = false;
-      ScaffoldMessenger.of(context!)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: Colors.red,
-        ));
+      Fluttertoast.showToast(msg: e.toString());
+      debugPrint(e.toString());
+
+      log(e.toString());
+      log(stacktrace.toString());
+    }
+  }
+
+  Future<void> updateUserCredentials(
+      {required String email,
+      required String fullName,
+      required String telephone,
+      required String classOption,
+      required String facebook,
+      required String affiliate,
+      required String schoolOrigin,
+      required String pvExamen,
+      File? image,
+      BuildContext? context}) async {
+    try {
+      isLoading = true;
+      String imageUrl = "";
+
+      _email = email;
+      if (image != null) {
+        try {
+          imageUrl = await firebaseStorageRepository.uploadImage(image);
+        } catch (e) {
+          isLoading = false;
+          throw (e.toString());
+        }
+      }
+
+      await userRepository.updateUserCredentials(
+        email: email,
+        fullName: fullName,
+        telephone: telephone,
+        classOption: classOption,
+        facebook: facebook,
+        affiliate: affiliate,
+        schoolOrigin: schoolOrigin,
+        pvExamen: pvExamen,
+        imageUrl: imageUrl,
+      );
+
+      var user = await userRepository.getUsersCredentials();
+
+      if (user != null) {
+        final userJson = json.encode(user.toJson());
+        localCache.saveToLocalCache(
+            key: ConstantString.userJson, value: userJson);
+      }
+
+      isLoading = false;
+      Navigator.of(context!).pushReplacementNamed(
+        ProfilePage.routeName,
+      );
+
+      // navigationHandler.pushNamed(
+      //   ProfileScreen.routeName,
+      // );
+    } catch (e, stacktrace) {
+      isLoading = false;
+      Fluttertoast.showToast(msg: e.toString());
       debugPrint(e.toString());
 
       log(e.toString());
@@ -137,12 +237,7 @@ class AuthViewModel extends BaseChangeNotifier {
       }
     } catch (e, stacktrace) {
       isLoading = false;
-      ScaffoldMessenger.of(context!)
-        ..removeCurrentSnackBar()
-        ..showSnackBar(SnackBar(
-          content: Text(e.toString()),
-          backgroundColor: Colors.red,
-        ));
+      Fluttertoast.showToast(msg: e.toString());
       debugPrint(e.toString());
 
       log(e.toString());

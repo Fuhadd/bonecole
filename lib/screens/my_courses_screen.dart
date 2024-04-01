@@ -188,10 +188,10 @@ class _MyCoursesScreenState extends ConsumerState<MyCoursesScreen> {
                             // mainAxisAlignment: MainAxisAlignment.start,
                             // crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Row(
+                              Row(
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
-                                children: [
+                                children: const [
                                   Text(
                                     "Downloads",
                                     // "Chapitre 1: Acide et base en solution aqueuse",
@@ -276,8 +276,10 @@ class _MyCoursesScreenState extends ConsumerState<MyCoursesScreen> {
                 ),
               ),
               Visibility(
-                visible: ref.watch(isPlayingProvider) ||
-                    ref.watch(playerProvider).state == PlayerState.paused,
+                visible:
+                    // ref.watch(isPlayingProvider) ||
+                    ref.watch(playerProvider).state == PlayerState.playing ||
+                        ref.watch(playerProvider).state == PlayerState.paused,
                 child: Positioned(
                   bottom: 20,
                   right: 0,

@@ -63,7 +63,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '314467559669',
     projectId: 'bonecole-2f0f4',
     storageBucket: 'bonecole-2f0f4.appspot.com',
-    iosClientId: '314467559669-rj49h0uh67ae64k1kt7ojo8cis5c17t7.apps.googleusercontent.com',
-    iosBundleId: 'com.urbanhive.bonecole',
+    iosClientId:
+        '314467559669-rj49h0uh67ae64k1kt7ojo8cis5c17t7.apps.googleusercontent.com',
+    iosBundleId: 'com.bonecole.bonecole',
   );
 }

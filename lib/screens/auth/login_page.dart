@@ -1,15 +1,15 @@
+import 'package:bonecole/screens/auth/register_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:form_builder_validators/form_builder_validators.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../utils/custom_colors.dart';
+import '../../utils/spacers.dart';
 import '../../widgets/my_button.dart';
 import '../../widgets/my_textfield.dart';
 import 'auth_view_model.dart';
-import 'register_screen.dart';
 
 class LoginPage extends StatefulHookConsumerWidget {
   const LoginPage({super.key});
@@ -31,7 +31,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Widget build(BuildContext context) {
     final loginVM = ref.watch(authProvider);
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: CustomColors.whiteColor,
       body: SafeArea(
         child: SingleChildScrollView(
           child: SizedBox(
@@ -41,73 +41,107 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             child: Padding(
               padding: const EdgeInsets.only(bottom: 20.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   FormBuilder(
                     key: _formKey,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const SizedBox(height: 50),
-                        SvgPicture.asset(
-                          "assets/icons/book_read.svg",
-                          height: 150,
-                          // width: double.infinity,
+                        // const SizedBox(height: 50),
+
+                        const SizedBox(height: 20),
+                        const Text(
+                          'Bienvenue à Bonécole!',
+                          style: TextStyle(
+                              color: CustomColors.blackColor,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w800),
                         ),
-
-                        // logo
-                        // const Icon(
-                        //   Icons.lock,
-                        //   size: 100,
-                        //   color: CustomColors.mainColor,
-                        // ),
-
-                        const SizedBox(height: 30),
-
+                        verticalSpacer(30),
                         Padding(
-                          padding: const EdgeInsets.only(right: 25.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                'Not a member?',
-                                style: TextStyle(color: Colors.grey[700]),
-                              ),
-                              const SizedBox(width: 4),
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.pushReplacementNamed(
-                                      context, RegisterPage.routeName);
-                                },
-                                child: const Text(
-                                  'Register now',
-                                  style: TextStyle(
-                                    color: CustomColors.mainColor,
-                                    fontWeight: FontWeight.bold,
+                              Container(
+                                height: 150,
+                                width: ((MediaQuery.of(context).size.width) -
+                                        180) /
+                                    2,
+                                decoration: const BoxDecoration(
+                                  color: CustomColors.mainColor,
+                                  image: DecorationImage(
+                                      image: AssetImage(
+                                        'assets/images/boy_yellow_bg.png',
+                                      ),
+                                      fit: BoxFit.cover),
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(100),
+                                    topRight: Radius.circular(100),
+                                    bottomLeft: Radius.circular(100),
                                   ),
                                 ),
+                              ),
+                              horizontalSpacer(20),
+                              Column(
+                                children: [
+                                  Container(
+                                    height: 80,
+                                    width:
+                                        ((MediaQuery.of(context).size.width) -
+                                                100) /
+                                            2,
+                                    decoration: const BoxDecoration(
+                                      color: CustomColors.mainColor,
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                            'assets/images/girl_red_bg.png',
+                                          ),
+                                          fit: BoxFit.cover),
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(100),
+                                        topRight: Radius.circular(100),
+                                        bottomRight: Radius.circular(100),
+                                      ),
+                                    ),
+                                  ),
+                                  verticalSpacer(10),
+                                  Container(
+                                    height: 80,
+                                    width:
+                                        ((MediaQuery.of(context).size.width) -
+                                                100) /
+                                            2,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.transparent,
+                                      image: DecorationImage(
+                                          image: AssetImage(
+                                            'assets/images/boy_blue_bg.png',
+                                          ),
+                                          fit: BoxFit.cover),
+                                      borderRadius: BorderRadius.only(
+                                        topLeft: Radius.circular(100),
+                                        bottomRight: Radius.circular(100),
+                                        bottomLeft: Radius.circular(100),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ),
-                        const SizedBox(height: 20),
 
-                        // welcome back, you've been missed!
-                        Text(
-                          'Welcome back you\'ve been missed!',
-                          style: TextStyle(
-                            color: Colors.grey[700],
-                            fontSize: 16,
-                          ),
-                        ),
+                        const SizedBox(height: 50),
 
                         const SizedBox(height: 25),
 
                         // username textfield
 
-                        customTextField(
+                        customTextField2(
                           "email",
-                          hintText: 'Email',
+                          hintText: 'Email address',
                           validator: FormBuilderValidators.compose(
                             [
                               FormBuilderValidators.email(
@@ -118,8 +152,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           ),
                         ),
 
-                        const SizedBox(height: 10),
-                        customTextField(
+                        const SizedBox(height: 20),
+                        customTextField2(
                           "password",
                           hintText: 'Password',
                           obscureText: obscureText,
@@ -141,19 +175,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         ),
                         const SizedBox(height: 15),
 
-                        // forgot password?
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 25.0),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              Text(
-                                'Forgot Password?',
-                                style: TextStyle(color: Colors.grey[600]),
-                              ),
-                            ],
-                          ),
-                        ),
+                        // // forgot password?
+                        // Padding(
+                        //   padding: const EdgeInsets.symmetric(horizontal: 25.0),
+                        //   child: Row(
+                        //     mainAxisAlignment: MainAxisAlignment.end,
+                        //     children: [
+                        //       Text(
+                        //         'Forgot Password?',
+                        //         style: TextStyle(color: Colors.grey[600]),
+                        //       ),
+                        //     ],
+                        //   ),
+                        // ),
 
                         const SizedBox(height: 25),
 
@@ -179,8 +213,36 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           },
                           color: CustomColors.mainColor,
                         ),
-
+                        verticalSpacer(30),
                         // not a member? register now
+                        Center(
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.pushReplacementNamed(
+                                  context, RegisterPage.routeName);
+                            },
+                            child: const Text.rich(
+                              TextSpan(
+                                text: ' Vous avez déjà un compte? ',
+                                style: TextStyle(
+                                  color: CustomColors.blackColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                                children: [
+                                  TextSpan(
+                                    text: 'Se connecter',
+                                    style: TextStyle(
+                                        color: Colors.red,
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 14,
+                                        decoration: TextDecoration.underline),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),

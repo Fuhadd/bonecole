@@ -114,3 +114,55 @@ Widget customMultiTextField(String name,
     ),
   );
 }
+
+Widget customTextField2(String name,
+    {required String hintText,
+    IconData? prefixIcon,
+    IconData? suffixIcon,
+    Widget? prefix,
+    String? initialValue,
+    bool isHint = false,
+    bool obscureText = false,
+    String? helperText,
+    String? Function(String?)? validator,
+    void Function()? onSuffixTap,
+    void Function(String?)? onChanged}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 25.0),
+    child: FormBuilderTextField(
+      initialValue: initialValue,
+      // cursorColor: CustomColors.,
+
+      name: name,
+      obscureText: obscureText,
+      validator: validator,
+      onChanged: onChanged,
+      decoration: InputDecoration(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black.withOpacity(0.15)),
+          ),
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(color: CustomColors.blackColor),
+          ),
+          suffixIcon: GestureDetector(
+            onTap: onSuffixTap,
+            child: Icon(
+              suffixIcon,
+              size: 16,
+              color: CustomColors.blackIconColor,
+            ),
+          ),
+          // fillColor: Colors.grey.shade200,
+          // filled: true,
+          floatingLabelStyle: const TextStyle(color: CustomColors.blackColor),
+          labelText: hintText,
+          // labelStyle: ,
+          labelStyle: TextStyle(
+              color: CustomColors.mainColor.withOpacity(0.6),
+              fontWeight: FontWeight.w500,
+              fontSize: 15)),
+    ),
+  );
+}
