@@ -6,6 +6,8 @@ class BookModel {
   String title;
   String uid;
   String body;
+  String price;
+  String subjectImageUrl;
 
   BookModel({
     required this.category,
@@ -15,6 +17,8 @@ class BookModel {
     required this.title,
     required this.uid,
     required this.body,
+    required this.price,
+    required this.subjectImageUrl,
   });
 
   factory BookModel.fromJson(json) => BookModel(
@@ -25,6 +29,8 @@ class BookModel {
         title: json["title"] ?? "",
         uid: json["uid"] ?? "",
         body: json["body"] ?? "",
+        price: json["price"] ?? "",
+        subjectImageUrl: json["subjectImageUrl"] ?? "",
       );
 
   Map<String, dynamic> toJson() => {
@@ -35,6 +41,8 @@ class BookModel {
         "title": title,
         "uid": uid,
         "body": body,
+        "price": price,
+        "subjectImageUrl": subjectImageUrl,
       };
 }
 

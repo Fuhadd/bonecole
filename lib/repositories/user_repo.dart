@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:bonecole/models/chapters_model.dart';
 import 'package:bonecole/models/course_model.dart';
+import 'package:bonecole/models/course_packs.dart';
 import 'package:bonecole/models/teachers_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/services.dart';
@@ -21,7 +22,10 @@ abstract class UserRepository {
   Future isUserSignedIn();
   Future logOut();
   Future resetPassword(String email);
+  Future<List<BookModel>> getBooksFromCourseList(List<String> courseIdList);
   Future<AppUser> fetchCurrentUser();
+  Future<TeacherModel?> getAllTeachersFromName(
+      String firstName, String lastName);
   Future<String?> saveUserCredentials({
     required String email,
     required String password,
@@ -48,6 +52,7 @@ abstract class UserRepository {
   });
   Future<AppUser?> getUsersCredentials();
   Future<List<BookModel>> getBooksByCourse(String courseId);
+  Future<List<CoursePackModel>> getCoursePacksByCourse(String categoryId);
   Future<List<BookModel>> getAllBooks();
   Future<List<CurriculumResultModel>> getAllCurriculumsBySection(
       String sectionId);
@@ -68,6 +73,8 @@ class UserRepositoryImpl implements UserRepository {
       FirebaseFirestore.instance.collection('users');
   CollectionReference sectionFirebaseFirestore =
       FirebaseFirestore.instance.collection('sections');
+  CollectionReference packFirebaseFirestore =
+      FirebaseFirestore.instance.collection('packs');
   CollectionReference chapterFirebaseFirestore =
       FirebaseFirestore.instance.collection('chapters');
   CollectionReference courseFirebaseFirestore =
@@ -297,6 +304,50 @@ class UserRepositoryImpl implements UserRepository {
   }
 
   @override
+  Future<List<BookModel>> getBooksFromCourseList(
+      List<String> courseIdList) async {
+    List<BookModel> books = [];
+    String? uid = firebaseAuth.currentUser?.uid.toString();
+    QuerySnapshot? querySnapshot;
+    for (var courseId in courseIdList) {
+      querySnapshot = await sectionFirebaseFirestore
+          .where('uid', isEqualTo: courseId)
+          .get();
+
+      for (var book in querySnapshot.docs) {
+        var result = BookModel.fromJson(book.data());
+        books.add(result);
+      }
+    }
+
+    // if (querySnapshot != null) {
+    //   for (var book in querySnapshot.docs) {
+    //     var result = BookModel.fromJson(book.data());
+    //     books.add(result);
+    //   }
+    // }
+
+    return books;
+  }
+
+  @override
+  Future<List<CoursePackModel>> getCoursePacksByCourse(
+      String categoryId) async {
+    List<CoursePackModel> coursePacks = [];
+    String? uid = firebaseAuth.currentUser?.uid.toString();
+    final QuerySnapshot querySnapshot = await packFirebaseFirestore
+        .where('categoryId', isEqualTo: categoryId)
+        .get();
+
+    for (var coursePack in querySnapshot.docs) {
+      var result = CoursePackModel.fromJson(coursePack.data());
+      coursePacks.add(result);
+    }
+
+    return coursePacks;
+  }
+
+  @override
   Future<List<BookModel>> getAllBooks() async {
     List<BookModel> books = [];
     String? uid = firebaseAuth.currentUser?.uid.toString();
@@ -432,5 +483,21 @@ class UserRepositoryImpl implements UserRepository {
     }
 
     return teachers;
+  }
+
+  @override
+  Future<TeacherModel?> getAllTeachersFromName(
+      String firstName, String lastName) async {
+    final QuerySnapshot querySnapshot = await teacherFirebaseFirestore
+        .where('firstName', isEqualTo: firstName)
+        .where('lastName', isEqualTo: lastName)
+        .get();
+    if (querySnapshot.docs.isEmpty) {
+      return null;
+    }
+    var teacher = querySnapshot.docs[0];
+    var result = TeacherModel.fromJson(teacher.data());
+
+    return result;
   }
 }

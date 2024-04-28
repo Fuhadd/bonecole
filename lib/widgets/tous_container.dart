@@ -1,3 +1,4 @@
+import 'package:bonecole/models/curriculum_model.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -80,17 +81,17 @@ class TousContainer extends StatelessWidget {
                 verticalSpacer(20),
                 Row(
                   children: [
-                    const Text(
-                      "30,000",
-                      // book.newPrice,
-                      style: TextStyle(
+                    Text(
+                      // "30,000",
+                      book.price,
+                      style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w700,
                           color: CustomColors.mainColor),
                     ),
                     horizontalSpacer(5),
                     const Text(
-                      "50,000",
+                      "150,000",
                       // book.oldPrice,
                       style: TextStyle(
                           fontSize: 13,
@@ -111,10 +112,10 @@ class TousContainer extends StatelessWidget {
                           size: 20,
                         ),
                         horizontalSpacer(10),
-                        const Text(
-                          "29 lecons",
+                        Text(
+                          "${curriculumList.length} lecons",
                           // "${book.pages} lecons",
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
                               color: CustomColors.mainColor),

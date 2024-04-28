@@ -17,6 +17,7 @@ import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as Path;
 
 import '../models/course_model.dart';
+import '../models/teachers_model.dart';
 import '../utils/directory_path.dart';
 import '../utils/random_image.dart';
 import 'audio_player_screen.dart';
@@ -25,11 +26,13 @@ import 'auth/auth_view_model.dart';
 class BookDetailScreen extends StatefulHookConsumerWidget {
   final BookModel book;
   final List<CurriculumResultModel> curriculums;
+  final TeacherModel? teacher;
 
   const BookDetailScreen({
     super.key,
     required this.book,
     required this.curriculums,
+    required this.teacher,
   });
   static const routeName = '/bookdetails';
 
@@ -230,29 +233,37 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                                     color: CustomColors.whiteColor),
                               ),
                               verticalSpacer(20),
-                              const Text(
-                                "Conçu par le MENA en collaboration avec l'INRAP, ce programme de Chimie Terminales est un programme harmonisé.",
-                                style: TextStyle(
+
+                              Text(
+                                widget.book.body,
+                                style: const TextStyle(
                                     fontSize: 12,
                                     fontWeight: FontWeight.w500,
                                     color: CustomColors.whiteColor),
                               ),
-                              verticalSpacer(20),
-                              const Text(
-                                "Ce cours couvre ce qui suit: ",
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w500,
-                                    color: CustomColors.whiteColor),
-                              ),
-                              verticalSpacer(10),
-                              const Text(
-                                "1) La notion de pH de quantité de matière et concentration \n2) Un acide fort, une base forte, un acide faible et une base faible \n3) La constante d'acidité, \n4) L'évolution des systèmes, \n5) La stéréochimie",
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w400,
-                                    color: CustomColors.whiteColor),
-                              ),
+                              // const Text(
+                              //   "Conçu par le MENA en collaboration avec l'INRAP, ce programme de Chimie Terminales est un programme harmonisé.",
+                              //   style: TextStyle(
+                              //       fontSize: 12,
+                              //       fontWeight: FontWeight.w500,
+                              //       color: CustomColors.whiteColor),
+                              // ),
+                              // verticalSpacer(20),
+                              // const Text(
+                              //   "Ce cours couvre ce qui suit: ",
+                              //   style: TextStyle(
+                              //       fontSize: 12,
+                              //       fontWeight: FontWeight.w500,
+                              //       color: CustomColors.whiteColor),
+                              // ),
+                              // verticalSpacer(10),
+                              // const Text(
+                              //   "1) La notion de pH de quantité de matière et concentration \n2) Un acide fort, une base forte, un acide faible et une base faible \n3) La constante d'acidité, \n4) L'évolution des systèmes, \n5) La stéréochimie",
+                              //   style: TextStyle(
+                              //       fontSize: 12,
+                              //       fontWeight: FontWeight.w400,
+                              //       color: CustomColors.whiteColor),
+                              // ),
                               verticalSpacer(30),
                               Row(
                                 children: [
@@ -261,10 +272,18 @@ class _BookDetailScreenState extends ConsumerState<BookDetailScreen> {
                                     width: 60,
                                     decoration: BoxDecoration(
                                         shape: BoxShape.circle,
-                                        image: DecorationImage(
-                                          image: AssetImage(imageUrl),
-                                          fit: BoxFit.cover,
-                                        )),
+                                        image: (widget.teacher == null ||
+                                                widget
+                                                    .teacher!.imageUrl.isEmpty)
+                                            ? DecorationImage(
+                                                image: AssetImage(imageUrl),
+                                                fit: BoxFit.cover,
+                                              )
+                                            : DecorationImage(
+                                                image: NetworkImage(
+                                                    widget.teacher!.imageUrl),
+                                                fit: BoxFit.cover,
+                                              )),
                                   ),
                                   horizontalSpacer(15),
                                   Column(
@@ -767,7 +786,9 @@ class _CurriculumListState extends State<CurriculumList> {
         subLevel: "subLevel",
         title: "headline6",
         uid: "uid",
-        body: "body");
+        body: "body",
+        price: "price",
+        subjectImageUrl: "");
     return GestureDetector(
       onTap: () {
         Navigator.push(

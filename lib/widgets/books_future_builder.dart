@@ -1,9 +1,10 @@
-import 'package:bonecole/models/book_model.dart';
+import 'package:bonecole/models/course_pack_result_model.dart';
 import 'package:bonecole/widgets/tous_container.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 
 import '../models/course_model.dart';
+import '../models/teachers_model.dart';
 import '../screens/book_details_screen.dart';
 import '../screens/screens_view_model.dart';
 import '../utils/custom_colors.dart';
@@ -22,7 +23,8 @@ class BooksFutureBuilder extends StatefulWidget {
 
   // final WidgetRef ref;
   final String category;
-  final Future<List<BookModel>> fetchData;
+  // final Future<List<BookModel>> fetchData;
+  final Future<CoursePackResultModel> fetchData;
   // final Color mainColor;
 
   @override
@@ -32,7 +34,10 @@ class BooksFutureBuilder extends StatefulWidget {
 class _BooksFutureBuilderState extends State<BooksFutureBuilder> {
   final Key _futureBuilderKey = UniqueKey();
   bool isLoading = false;
-  bool isHeaderLoading = false;
+  List<bool> isHeaderLoading = List<bool>.generate(5, (index) => false);
+  TeacherModel? teacher;
+  // bool isHeaderLoading =false;
+
   int currentIndex = 0;
 
   @override
@@ -83,9 +88,9 @@ class _BooksFutureBuilderState extends State<BooksFutureBuilder> {
           //       snapshot.data!;
           // });
 
-          final books = snapshot.data;
+          final books = snapshot.data?.courses;
 
-          if (snapshot.data!.isEmpty) {
+          if (snapshot.data!.courses.isEmpty) {
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -115,31 +120,40 @@ class _BooksFutureBuilderState extends State<BooksFutureBuilder> {
               padding: const EdgeInsets.only(left: 8.0, right: 8, bottom: 10),
               child: Column(
                 children: [
-                  GestureDetector(
-                    onTap: isLoading
-                        ? null
-                        : () async {
-                            setState(() {
-                              isHeaderLoading = true;
-                            });
-                            List<CurriculumResultModel> curriculums =
-                                await ScreenViewModel()
-                                    .getAllCurriculumsBySection(books![0].uid);
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => BookDetailScreen(
-                                      book: books[0],
-                                      curriculums: curriculums,
-                                    )));
-                            setState(() {
-                              isHeaderLoading = false;
-                            });
-                          },
-                    child: HeaderContainer(
-                      title: widget.category,
-                      bookImageUrl: "assets/images/6eannee.png",
-                      isLoading: isHeaderLoading,
-                    ),
-                  ),
+                  ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: snapshot.data?.coursePacks.length,
+                      itemBuilder: (context, index) {
+                        return GestureDetector(
+                          // onTap: isLoading
+                          //     ? null
+                          //     : () async {
+                          //         setState(() {
+                          //           isHeaderLoading = true;
+                          //         });
+                          //         List<CurriculumResultModel> curriculums =
+                          //             await ScreenViewModel()
+                          //                 .getAllCurriculumsBySection(
+                          //                     books![0].uid);
+                          //         Navigator.of(context).push(MaterialPageRoute(
+                          //             builder: (context) => BookDetailScreen(
+                          //                   book: books[0],
+                          //                   curriculums: curriculums,
+                          //                 )));
+                          //         setState(() {
+                          //           isHeaderLoading = false;
+                          //         });
+                          //       },
+                          child: HeaderContainer(
+                            title: widget.category,
+                            coursePack: snapshot.data!.coursePacks[index],
+                            bookImageUrl: getImage(),
+                            books: books!,
+                            // isLoading: isHeaderLoading,
+                          ),
+                        );
+                      }),
                   // : const SizedBox.shrink(),
                   GridView.builder(
                     shrinkWrap: true,
@@ -155,7 +169,8 @@ class _BooksFutureBuilderState extends State<BooksFutureBuilder> {
                       // Set spacing between columns
                       mainAxisSpacing: 20,
                     ),
-                    itemCount: books!.length - 1,
+                    // itemCount: books!.length - 1,
+                    itemCount: books!.length,
                     itemBuilder: (context, index) {
                       String imageUrl = getImage();
                       return GestureDetector(
@@ -164,26 +179,46 @@ class _BooksFutureBuilderState extends State<BooksFutureBuilder> {
                             : () async {
                                 setState(() {
                                   isLoading = true;
-                                  currentIndex = index + 1;
+                                  currentIndex = index;
                                 });
                                 List<CurriculumResultModel> curriculums =
                                     await ScreenViewModel()
                                         .getAllCurriculumsBySection(
-                                            books[index + 1].uid);
+                                            books[index].uid);
+
+                                String fullName = books[index].instructor;
+                                List<String> nameParts = fullName
+                                    .split(' '); // Split the string at spaces
+
+                                String firstName = nameParts.isNotEmpty
+                                    ? nameParts[0]
+                                    : ""; // First word as firstName
+                                String lastName = nameParts.length > 1
+                                    ? nameParts.sublist(1).join(' ').trim()
+                                    : ""; // Remaining words as lastName
+
+                                teacher = await ScreenViewModel()
+                                    .getAllTeachersFromName(
+                                        firstName, lastName);
+                                // books[index + 1].uid);
                                 Navigator.of(context).push(MaterialPageRoute(
                                     builder: (context) => BookDetailScreen(
-                                          book: books[index + 1],
+                                          // book: books[index + 1],
+                                          book: books[index],
                                           curriculums: curriculums,
+                                          teacher: teacher,
                                         )));
                                 setState(() {
                                   isLoading = false;
-                                  currentIndex = index + 1;
+                                  currentIndex = index;
                                 });
                               },
                         child: TousContainer(
-                          book: books[index + 1],
+                          // book: books[index + 1],
+                          book: books[index],
                           isLoading: isLoading,
-                          index: index + 1,
+                          // index: index + 1,
+                          index: index,
                           currentIndex: currentIndex,
                         ),
                       );
